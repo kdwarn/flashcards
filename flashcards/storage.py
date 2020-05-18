@@ -14,22 +14,22 @@ from flashcards import sets
 """
 The directory name where all of the Flashcards data is stored on the machine.
 """
-STORAGE_DIR_NAME = '.flashcards'
+STORAGE_DIR_NAME = ".flashcards"
 
 
 """
 The directory name where all of the Flashcards's study set data
 is stored on the machine.
 """
-STUDY_SET_STORAGE_DIR = 'studysets'
+STUDY_SET_STORAGE_DIR = "studysets"
 
 
 """ Default extension of a study set file on the machine """
-STUDY_SET_EXTENSION = '.json'
+STUDY_SET_EXTENSION = ".json"
 
 
 """ Selected studyset filename """
-SELECTED_STUDYSET_NAME = '.SELECTEDSTUDYSET'
+SELECTED_STUDYSET_NAME = ".SELECTEDSTUDYSET"
 
 
 def create_studyset_file(studyset):
@@ -41,10 +41,10 @@ def create_studyset_file(studyset):
     filepath = _generate_studyset_filepath(studyset)
 
     if os.path.isfile(filepath) or os.path.exists(filepath):
-        raise IOError('A file already exist, cannot create study set.')
+        raise IOError("A file already exist, cannot create study set.")
 
     # Create the file
-    open(filepath, 'a').close()
+    open(filepath, "a").close()
 
     # Store the study set in the file
     store_studyset(studyset)
@@ -89,7 +89,7 @@ def link_selected_studyset(filepath):
     try:
         os.symlink(filepath, linkpath)
 
-    except OSError, e:
+    except OSError as e:
         if e.errno == errno.EEXIST:
             os.remove(linkpath)
             os.symlink(filepath, linkpath)
@@ -110,6 +110,7 @@ class StudySetStorage(storageUtils.JSONFileStorage):
     Utility object to load and save a StudySet object from a
     file on the machine.
     """
+
     def load(self):
         """
         Load and return the StudySet contain in this file.
@@ -131,13 +132,12 @@ class StudySetStorage(storageUtils.JSONFileStorage):
 
 def storage_path():
     """ Get the absolute storage path on the machine """
-    return os.path.join(os.path.expanduser('~'), STORAGE_DIR_NAME)
+    return os.path.join(os.path.expanduser("~"), STORAGE_DIR_NAME)
 
 
 def studyset_storage_path():
     """ Get the absolute storage path for the study sets on the machine """
-    return os.path.join(os.path.expanduser('~'),
-                        STORAGE_DIR_NAME, STUDY_SET_STORAGE_DIR)
+    return os.path.join(os.path.expanduser("~"), STORAGE_DIR_NAME, STUDY_SET_STORAGE_DIR)
 
 
 def selected_studyset_path():
@@ -177,7 +177,7 @@ def verify_storage_dir_integrity():
 def _create_storage_dir():
     """ Create the storage directory in the home folder. """
     if os.path.exists(storage_path()) and os.path.isdir(storage_path()):
-        raise IOError('Storage directory already exists.')
+        raise IOError("Storage directory already exists.")
 
     os.mkdir(storage_path())
 
@@ -186,6 +186,6 @@ def _create_studyset_storage_dir():
     """ Create the studyset storage directory in the storage directory. """
     path = studyset_storage_path()
     if os.path.exists(path) and os.path.isdir(path):
-        raise IOError('Studyset storage directory already exists.')
+        raise IOError("Studyset storage directory already exists.")
 
     os.mkdir(path)
