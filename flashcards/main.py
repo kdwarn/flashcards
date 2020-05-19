@@ -26,7 +26,7 @@ def cli():
     pass
 
 
-@click.command('status')
+@click.command("status")
 def status_cmd():
     """
     Show status of the application.
@@ -39,25 +39,25 @@ def status_cmd():
     try:
         studyset = storage.load_selected_studyset()
 
-        click.echo('Currently selected studyset: %s \n' % studyset.title)
-        click.echo('[NUMBER OF CARDS]: %s \n' % len(studyset))
-        click.echo('[DESCRIPTION]:')
-        click.echo(studyset.description + '\n')
+        click.echo("Currently selected studyset: %s \n" % studyset.title)
+        click.echo("[NUMBER OF CARDS]: %s \n" % len(studyset))
+        click.echo("[DESCRIPTION]:")
+        click.echo(studyset.description + "\n")
 
     except IOError:
-        click.echo('No studyset currently selected.')
+        click.echo("No studyset currently selected.")
 
 
-@click.command('study')
-@click.argument('studyset')
-@click.option('-m', '--mode', default=None)
+@click.command("study")
+@click.argument("studyset")
+@click.option("-m", "--mode", default=None)
 def study_cmd(studyset, mode):
     """
     Start a study session.
 
     Study the studyset passed via the studyset argument.
     """
-    studyset_path = os.path.join(storage.studyset_storage_path(), studyset)
+    studyset_path = os.path.join(storage.studyset_storage_path(), studyset + ".json")
     studyset = storage.load_studyset(studyset_path).load()
 
     studysession = study.get_study_session_template(mode)
