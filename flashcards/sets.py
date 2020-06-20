@@ -9,9 +9,9 @@ from collections import OrderedDict
 from flashcards import cards
 from flashcards.cards import StudyCard
 
-TITLE_KEY = 'title'
-DESC_KEY = 'description'
-CARDS_KEY = 'cards'
+TITLE_KEY = "title"
+DESC_KEY = "description"
+CARDS_KEY = "cards"
 
 
 def create_from_dict(data):
@@ -49,8 +49,7 @@ def _assert_data_is_valid(data):
     if CARDS_KEY not in data:
         raise KeyError("Invalid data string. %s key is missing" % CARDS_KEY)
     if not isinstance(data[CARDS_KEY], list):
-        raise ValueError("Invalid data type. %s value's should be a list"
-                         % CARDS_KEY)
+        raise ValueError("Invalid data type. %s value's should be a list" % CARDS_KEY)
 
 
 class StudySet(object):
@@ -66,7 +65,7 @@ class StudySet(object):
         :param description: The description for this study set.
         """
         self._title = title
-        self._description = '' if description is None else description
+        self._description = "" if description is None else description
         self._cards = []
 
     def __iter__(self):
@@ -126,8 +125,7 @@ class StudySet(object):
         if isinstance(card, StudyCard):
             self._cards.append(card)
         else:
-            raise TypeError("A Set can only contain instances of "
-                            "StudyCard objects.")
+            raise TypeError("A Set can only contain instances of StudyCard objects.")
 
     def to_dict(self):
         """
@@ -137,8 +135,10 @@ class StudySet(object):
         """
         serialized_cards = [c.to_dict() for c in self]
 
-        data = ((TITLE_KEY, self.title),
-                (DESC_KEY, self.description),
-                (CARDS_KEY, serialized_cards))
+        data = (
+            (TITLE_KEY, self.title),
+            (DESC_KEY, self.description),
+            (CARDS_KEY, serialized_cards),
+        )
 
         return OrderedDict(data)
