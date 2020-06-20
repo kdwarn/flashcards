@@ -4,11 +4,7 @@ Fork of [zergov/flashcards](https://github.com/zergov/flashcards), not yet on Py
 
 Command line application that focus on creating decks of flashcards quickly and easily.
 
-## What is flashcards
-
-Flashcards is a small CLI Study tool. It focuses on creating decks of flashcards easily and quickly.
-
-## Installing flashcards
+## Installation
 
 This fork is not yet on PyPI. To install the original:
 
@@ -99,9 +95,9 @@ $ flashcards study French
 
 During a study session, the application will iterate through the cards in your studyset.  For every card, the question of the card will be displayed. The program will then wait for any input before showing the answer to this question. After each question, you can quit the session by pressing the "q" key.
 
-## Study Modes
+### Study Modes
 
-Flashcards has two study modes: Linear and Shuffled. By default, the cards will be displayed in the order they were created. If you pass the `--shuffled` flag to the `flashcards study` command, they will instead be displayed in random order.
+Flashcards has two study modes. By default, the cards will be displayed in the order they were created. If you pass the `--shuffled` flag to the `flashcards study` command, they will instead be displayed in random order.
 
 ```
 $ flashcards study French --shuffled
