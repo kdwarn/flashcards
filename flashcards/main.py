@@ -50,8 +50,8 @@ def status_cmd():
 
 @click.command("study")
 @click.argument("studyset")
-@click.option("-m", "--mode", default=None)
-def study_cmd(studyset, mode):
+@click.option("--shuffle", is_flag=True)
+def study_cmd(studyset, shuffle):
     """
     Start a study session.
 
@@ -59,8 +59,10 @@ def study_cmd(studyset, mode):
     """
     studyset_path = os.path.join(storage.studyset_storage_path(), studyset + ".json")
     studyset = storage.load_studyset(studyset_path).load()
-
-    studysession = study.get_study_session_template(mode)
+    if shuffle:
+        studysession = study.get_study_session_template("shuffled")
+    else:
+        studysession = study.get_study_session_template("linear")
     studysession.start(studyset)
 
 
