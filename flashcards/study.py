@@ -6,6 +6,7 @@ Contain the StudySession logic.
 This module should host the class that subclasses BaseStudySession.
 """
 import random
+import sys
 
 import click
 
@@ -23,6 +24,7 @@ class BaseStudySession(object):
         3) Show the answer
         4) Wait for user input
     """
+
     def start(self, cards):
         """
         Start a StudySession with the iterator of cards given.
@@ -36,6 +38,10 @@ class BaseStudySession(object):
             click.clear()
             self.show_question(card.question)
             self.show_answer(card.answer)
+            click.echo("Press any key to show the next question, and 'q' to quit.")
+            key_press = click.getchar()
+            if key_press == "q":
+                sys.exit()
 
     def show_question(self, question):
         """
@@ -43,10 +49,10 @@ class BaseStudySession(object):
 
         :param question: the question to display
         """
-        header = '[QUESTION %s / %s]' % (self.question_count, self.question_num)
+        header = "[QUESTION %s / %s]" % (self.question_count, self.question_num)
         click.echo(header)
-        click.echo('\n' + question + '\n')
-        click.pause('...')
+        click.echo("\n" + question + "\n")
+        click.pause("...")
 
     def show_answer(self, answer):
         """
@@ -55,8 +61,7 @@ class BaseStudySession(object):
         :param answer: the answer
         """
         self.question_count += 1
-        click.echo('\n' + answer + '\n')
-        click.pause('Press any key to show next question')
+        click.echo("\n" + answer + "\n")
 
 
 class ShuffledStudySession(BaseStudySession):
@@ -79,8 +84,7 @@ class ShuffledStudySession(BaseStudySession):
 
 
 # Association of Study session modes to the respective class instance.
-STUDY_MODES = {'linear': BaseStudySession,
-               'shuffled': ShuffledStudySession}
+STUDY_MODES = {"linear": BaseStudySession, "shuffled": ShuffledStudySession}
 
 
 def get_study_session_template(sessionMode):
