@@ -1,5 +1,5 @@
 """
-flashcards.sets
+flashcards.decks
 ~~~~~~~~~~~~~~~~~~~
 
 Contain the Deck object and logic related to it.
@@ -9,7 +9,7 @@ from collections import OrderedDict
 from flashcards import cards
 from flashcards.cards import StudyCard
 
-TITLE_KEY = "title"
+NAME_KEY = "name"
 DESC_KEY = "description"
 CARDS_KEY = "cards"
 
@@ -27,11 +27,11 @@ def create_from_dict(data):
     """
     _assert_data_is_valid(data)
 
-    title = data[TITLE_KEY]
+    name = data[NAME_KEY]
     description = data[DESC_KEY]
     study_cards = [cards.create_from_dict(card) for card in data[CARDS_KEY]]
 
-    deck = Deck(title, description)
+    deck = Deck(name, description)
 
     for card in study_cards:
         deck.add(card)
@@ -42,8 +42,8 @@ def create_from_dict(data):
 def _assert_data_is_valid(data):
     """ Check that data received in `create_from_dict` has a valid format """
 
-    if TITLE_KEY not in data:
-        raise KeyError("Invalid data string. %s key is missing" % TITLE_KEY)
+    if NAME_KEY not in data:
+        raise KeyError("Invalid data string. %s key is missing" % NAME_KEY)
     if DESC_KEY not in data:
         raise KeyError("Invalid data string. %s key is missing" % DESC_KEY)
     if CARDS_KEY not in data:
@@ -52,24 +52,22 @@ def _assert_data_is_valid(data):
         raise ValueError("Invalid data type. %s value's should be a list" % CARDS_KEY)
 
 
-class Deck(object):
-    """
-    A Deck is a container of flash cards.
-    """
+class Deck:
+    """A Deck is a container of flash cards."""
 
-    def __init__(self, title, description=None):
+    def __init__(self, name, description=None):
         """
         Creates a Deck.
 
-        :param title: The title of the deck.
+        :param name: The name of the deck.
         :param description: The description for this deck.
         """
-        self._title = title
+        self._name = name
         self._description = "" if description is None else description
         self._cards = []
 
     def __iter__(self):
-        """Iter through the cards of this set."""
+        """Iter through the cards of this deck."""
         return iter(self._cards)
 
     def __len__(self):
@@ -77,39 +75,39 @@ class Deck(object):
         return len(self._cards)
 
     @property
-    def title(self):
+    def name(self):
         """
-        Get the title of this set.
+        Get the name of this deck.
 
-        :returns: The title of this Deck.
+        :returns: The name of this Deck.
         """
-        return self._title
+        return self._name
 
-    @title.setter
-    def title(self, value):
+    @name.setter
+    def name(self, value):
         """
-        Set the title of this set.
+        Set the name of this deck.
 
-        :param value: The new title for this set
+        :param value: The new name for this deck
         """
         if isinstance(value, basestring):
-            self._title = value
+            self._name = value
         else:
-            raise TypeError("Deck title should be of type str")
+            raise TypeError("Deck name should be of type str")
 
     @property
     def description(self):
         """
-        Get the description of this set.
+        Get the description of this deck.
         """
         return self._description
 
     @description.setter
     def description(self, value):
         """
-        Set the description of this set.
+        Set the description of this deck.
 
-        :param value: The new description for this set
+        :param value: The new description for this deck
         """
         if isinstance(value, basestring):
             self._description = value
@@ -118,14 +116,14 @@ class Deck(object):
 
     def add(self, card):
         """
-        Add a card to the end of this set.
+        Add a card to the end of this deck.
 
         :param card: A subclass of flashcards.cards.StudyCard object.
         """
         if isinstance(card, StudyCard):
             self._cards.append(card)
         else:
-            raise TypeError("A Set can only contain instances of StudyCard objects.")
+            raise TypeError("A Deck can only contain instances of StudyCard objects.")
 
     def to_dict(self):
         """
@@ -136,7 +134,7 @@ class Deck(object):
         serialized_cards = [c.to_dict() for c in self]
 
         data = (
-            (TITLE_KEY, self.title),
+            (NAME_KEY, self.name),
             (DESC_KEY, self.description),
             (CARDS_KEY, serialized_cards),
         )

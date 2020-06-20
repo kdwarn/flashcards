@@ -9,7 +9,7 @@ import os
 import errno
 
 from flashcards.utils import storage as storageUtils
-from flashcards import sets
+from flashcards import decks
 
 # The directory name where all of the Flashcards data is stored on the machine.
 STORAGE_DIR_NAME = ".flashcards"
@@ -113,15 +113,15 @@ class DeckStorage(storageUtils.JSONFileStorage):
         :returns: a Deck object
         """
         content = super(DeckStorage, self).load()
-        return sets.create_from_dict(content)
+        return decks.create_from_dict(content)
 
     def save(self, deck):
         """ Save the provided Deck object in the current file. """
         data = deck.to_dict()
         super(DeckStorage, self).save(data)
 
-        # rename the name of this file by the title of this deck.
-        filename = storageUtils.generate_filename_from_str(deck.title)
+        # rename the name of this file by the name of this deck.
+        filename = storageUtils.generate_filename_from_str(deck.name)
         self._rename_filename(filename)
 
 
@@ -148,7 +148,7 @@ def _generate_deck_filepath(deck):
 
     :returns: absolute file path to the storage file.
     """
-    filename = storageUtils.generate_filename_from_str(deck.title)
+    filename = storageUtils.generate_filename_from_str(deck.name)
     filename = filename + DECK_EXTENSION
     return os.path.join(deck_storage_path(), filename)
 

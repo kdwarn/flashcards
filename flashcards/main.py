@@ -13,7 +13,7 @@ import click
 
 from flashcards import storage
 from flashcards import study
-from flashcards import sets
+from flashcards import decks
 from flashcards.cards import StudyCard
 
 
@@ -34,14 +34,14 @@ def status_cmd():
     Show status of the application.
 
     Displaying the currently selected deck.
-        - deck title
+        - deck name
         - deck description
         - number of cards
     """
     try:
         deck = storage.load_selected_deck()
 
-        click.echo("Currently selected deck: %s \n" % deck.title)
+        click.echo("Currently selected deck: %s \n" % deck.name)
         click.echo("[NUMBER OF CARDS]: %s \n" % len(deck))
         click.echo("[DESCRIPTION]:")
         click.echo(deck.description + "\n")
@@ -61,7 +61,7 @@ def study_cmd(deck, shuffle):
     """
     if not deck:
         try:
-            deck = storage.load_selected_deck().title
+            deck = storage.load_selected_deck().name
         except IOError:
             return click.echo("No deck currently selected.")
 
@@ -75,16 +75,16 @@ def study_cmd(deck, shuffle):
 
 
 @click.command("create")
-@click.option("--title", prompt="Title of the deck")
-@click.option("--desc", prompt="Description for the deck (optional)")
-def create(title, desc):
+@click.option("--name", prompt="Name of the deck")
+@click.option("--desc", prompt="Description of the deck")
+def create(name, desc):
     """
     Create a new deck.
 
-    User supplies a title and a description.
-    If this study set does not exist, it is created.
+    User supplies a name and a description.
+    If this deck does not exist, it is created.
     """
-    deck = sets.Deck(title, desc)
+    deck = decks.Deck(name, desc)
     filepath = storage.create_deck_file(deck)
 
     # automatically select this deck
@@ -103,14 +103,14 @@ def select(deck):
     deck_path = os.path.join(storage.deck_storage_path(), deck + ".json")
     storage.link_selected_deck(deck_path)
     deck_obj = storage.load_deck(deck_path).load()
-    click.echo("Selected deck: %s" % deck_obj.title)
+    click.echo("Selected deck: %s" % deck_obj.name)
     click.echo("New cards will be added to this deck.")
 
 
 @click.command("add")
 @click.option("-e", "editormode", flag_value=True, default=False)
 def add(editormode):
-    """ Add a studycard to the currently selected deck. """
+    """ Add a card to the currently selected deck. """
     try:
         deck = storage.load_selected_deck()
 
