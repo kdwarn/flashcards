@@ -19,14 +19,14 @@ def generate_filename_from_str(string):
 
     :returns: the generated string, a valid filename
     """
-    keepchars = [' ', '-', '_']  # characters to keep in the filename
-    swapchars = {' ': '_', '-': '_'}  # keys are swapped by their values
+    keepchars = [" ", "-", "_"]  # characters to keep in the filename
+    swapchars = {" ": "_", "-": "_"}  # keys are swapped by their values
 
     for key, value in swapchars.items():
         string = string.replace(key, value)
 
-    _ = [c for c in string if c.isalnum() or c is ' ' or c in keepchars]
-    return ''.join(_).rstrip()
+    _ = [c for c in string if c.isalnum() or c is " " or c in keepchars]
+    return "".join(_).rstrip()
 
 
 def assert_valid_file(filepath):
@@ -45,6 +45,7 @@ class FileStorage(object):
     Utility object that manage the reading / saving of a file while assuring
     that the file is closed once we're done using it.
     """
+
     def __init__(self, filepath):
         self._filepath = filepath
 
@@ -61,7 +62,7 @@ class FileStorage(object):
         assert_valid_file(self._filepath)
 
         content = None
-        with open(self._filepath, 'r') as file:
+        with open(self._filepath, "r") as file:
             content = file.read()
 
         return content
@@ -83,7 +84,7 @@ class FileStorage(object):
         """
         assert_valid_file(self._filepath)
 
-        with open(self._filepath, 'w') as file:
+        with open(self._filepath, "w") as file:
             file.write(content)
 
     def _rename_filename(self, filename):
@@ -107,6 +108,7 @@ class JSONFileStorage(FileStorage):
     """
     Utility object to save and load serialized JSON objects stored in a file.
     """
+
     def load(self):
         """
         Load and serialize the data in this file.
@@ -133,8 +135,7 @@ class JSONFileStorage(FileStorage):
 
         :returns: a string of representation of the serialized object
         """
-        return json.dumps(data, sort_keys=False, indent=4,
-                          separators=(',', ': '))
+        return json.dumps(data, sort_keys=False, indent=4, separators=(",", ": "))
 
     def _deserialize(self, string):
         """

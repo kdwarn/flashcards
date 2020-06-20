@@ -33,94 +33,99 @@ def status_cmd():
     """
     Show status of the application.
 
-    Displaying the currently selected studyset.
-        - studyset title
-        - studyset description
+    Displaying the currently selected deck.
+        - deck title
+        - deck description
         - number of cards
     """
     try:
-        studyset = storage.load_selected_studyset()
+        deck = storage.load_selected_deck()
 
-        click.echo("Currently selected studyset: %s \n" % studyset.title)
-        click.echo("[NUMBER OF CARDS]: %s \n" % len(studyset))
+        click.echo("Currently selected deck: %s \n" % deck.title)
+        click.echo("[NUMBER OF CARDS]: %s \n" % len(deck))
         click.echo("[DESCRIPTION]:")
-        click.echo(studyset.description + "\n")
+        click.echo(deck.description + "\n")
 
     except IOError:
-        click.echo("No studyset currently selected.")
+        click.echo("No deck currently selected.")
 
 
 @click.command("study")
-@click.argument("studyset")
+@click.argument("deck", default="")
 @click.option("--shuffle", is_flag=True)
-def study_cmd(studyset, shuffle):
+def study_cmd(deck, shuffle):
     """
     Start a study session.
 
-    Study the studyset passed via the studyset argument.
+    If DECK not provided, study the selected deck, if any.
     """
-    studyset_path = os.path.join(storage.studyset_storage_path(), studyset + ".json")
-    studyset = storage.load_studyset(studyset_path).load()
+    if not deck:
+        try:
+            deck = storage.load_selected_deck().title
+        except IOError:
+            return click.echo("No deck currently selected.")
+
+    deck_path = os.path.join(storage.deck_storage_path(), deck + ".json")
+    deck = storage.load_deck(deck_path).load()
     if shuffle:
         studysession = study.get_study_session_template("shuffled")
     else:
         studysession = study.get_study_session_template("linear")
-    studysession.start(studyset)
+    studysession.start(deck)
 
 
 @click.command("create")
-@click.option("--title", prompt="Title of the study set")
-@click.option("--desc", prompt="Description for the study set (optional)")
+@click.option("--title", prompt="Title of the deck")
+@click.option("--desc", prompt="Description for the deck (optional)")
 def create(title, desc):
     """
-    Create a new study set.
+    Create a new deck.
 
     User supplies a title and a description.
     If this study set does not exist, it is created.
     """
-    study_set = sets.StudySet(title, desc)
-    filepath = storage.create_studyset_file(study_set)
+    deck = sets.Deck(title, desc)
+    filepath = storage.create_deck_file(deck)
 
-    # automatically select this studyset
-    storage.link_selected_studyset(filepath)
-    click.echo("Study set created!")
+    # automatically select this deck
+    storage.link_selected_deck(filepath)
+    click.echo("Deck created!")
 
 
 @click.command("select")
-@click.argument("studyset")
-def select(studyset):
+@click.argument("deck")
+def select(deck):
     """
-    Select a studyset.
+    Select a deck.
 
-    Focus on a studyset, every new added cards are going to be put directly in
-    this studyset.
+    New cards will be added to this deck, and a study session will open this deck.
     """
-    studyset_path = os.path.join(storage.studyset_storage_path(), studyset + ".json")
-    storage.link_selected_studyset(studyset_path)
-    studyset_obj = storage.load_studyset(studyset_path).load()
-    click.echo("Selected studyset: %s" % studyset_obj.title)
-    click.echo("Next created cards will be automatically added to this studyset.")
+    deck_path = os.path.join(storage.deck_storage_path(), deck + ".json")
+    storage.link_selected_deck(deck_path)
+    deck_obj = storage.load_deck(deck_path).load()
+    click.echo("Selected deck: %s" % deck_obj.title)
+    click.echo("New cards will be added to this deck.")
 
 
 @click.command("add")
 @click.option("-e", "editormode", flag_value=True, default=False)
 def add(editormode):
-    """ Add a studycard to the currently selected studyset. """
+    """ Add a studycard to the currently selected deck. """
     try:
-        studyset = storage.load_selected_studyset()
+        deck = storage.load_selected_deck()
 
         question = _ask_for_question(editormode)
         answer = _ask_for_answer(editormode)
 
-        # Create the card and add it to the studyset
-        # Update the studyset by overwriting the old information.
-        studyset.add(StudyCard(question, answer))
-        storage.store_studyset(studyset)
+        # Create the card and add it to the deck
+        # Update the deck by overwriting the old information.
+        deck.add(StudyCard(question, answer))
+        storage.store_deck(deck)
 
-        click.echo("Card added to the studyset !")
+        click.echo("Card added to the deck!")
 
     except IOError:
-        click.echo("There is no studyset currently selected. Select a studyset to add a card.")
+        click.echo("There is no deck currently selected. Select a deck to add a card.")
 
 
 def _ask_for_question(editor_mode=False):

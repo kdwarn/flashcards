@@ -11,79 +11,74 @@ import errno
 from flashcards.utils import storage as storageUtils
 from flashcards import sets
 
-"""
-The directory name where all of the Flashcards data is stored on the machine.
-"""
+# The directory name where all of the Flashcards data is stored on the machine.
 STORAGE_DIR_NAME = ".flashcards"
 
 
-"""
-The directory name where all of the Flashcards's study set data
-is stored on the machine.
-"""
-STUDY_SET_STORAGE_DIR = "studysets"
+# The directory name where all of the Flashcards's deck data is stored on the machine.
+DECK_STORAGE_DIR = "decks"
 
 
-""" Default extension of a study set file on the machine """
-STUDY_SET_EXTENSION = ".json"
+# Default extension of a deck file on the machine
+DECK_EXTENSION = ".json"
 
 
-""" Selected studyset filename """
-SELECTED_STUDYSET_NAME = ".SELECTEDSTUDYSET"
+# Selected deck filename
+SELECTED_DECK_NAME = ".SELECTEDDECK"
 
 
-def create_studyset_file(studyset):
+def create_deck_file(deck):
     """
-    Create a file and store the supplied studyset in it.
+    Create a file and store the supplied deck in it.
 
-    :param study_set: the study set to store.
+    :param deck: the dick to store.
     """
-    filepath = _generate_studyset_filepath(studyset)
+    filepath = _generate_deck_filepath(deck)
 
     if os.path.isfile(filepath) or os.path.exists(filepath):
-        raise IOError("A file already exist, cannot create study set.")
+        raise IOError("A file already exist, cannot create deck.")
 
     # Create the file
     open(filepath, "a").close()
 
-    # Store the study set in the file
-    store_studyset(studyset)
+    # Store the deck in the file
+    store_deck(deck)
     return filepath
 
 
-def store_studyset(studyset):
+def store_deck(deck):
     """
-    Store the supplied study set in the storage folder.
+    Store the supplied deck the storage folder.
 
     An exception is raised if the file does not exists.
 
-    :param study_set: the study set to store.
+    :param deck: the deck to store.
     """
-    filepath = _generate_studyset_filepath(studyset)
+    filepath = _generate_deck_filepath(deck)
 
-    storage_item = StudySetStorage(filepath)
-    storage_item.save(studyset)
+    storage_item = DeckStorage(filepath)
+    storage_item.save(deck)
 
 
-def load_studyset(filepath):
+def load_deck(filepath):
     """
-    Attempt to load the study set from a storage item.
+    Attempt to load the deck from a storage item.
 
-    :param filepath: the filepath of the study set file
+    :param filepath: the filepath of the deck file
 
-    :returns: StudySetStorage object
+    :returns: DeckStorage object
     """
     storageUtils.assert_valid_file(filepath)
-    return StudySetStorage(filepath)
+    return DeckStorage(filepath)
 
 
-def link_selected_studyset(filepath):
+def link_selected_deck(filepath):
     """
-    Create a symbolic link to the selected studyset.
+    Create a symbolic link to the selected deck.
 
-    :param filepath: the filepath of the studyset
+    :param filepath: the filepath of the deck
     """
-    linkpath = selected_studyset_path()
+    linkpath = selected_deck_path()
 
     # Force symlink
     try:
@@ -95,38 +90,38 @@ def link_selected_studyset(filepath):
             os.symlink(filepath, linkpath)
 
 
-def load_selected_studyset():
+def load_selected_deck():
     """
-    Load and return the currently selected studyset.
+    Load and return the currently selected deck.
 
-    :returns: StudySet object.
+    :returns: Deck object.
     """
-    item = StudySetStorage(selected_studyset_path())
+    item = DeckStorage(selected_deck_path())
     return item.load()
 
 
-class StudySetStorage(storageUtils.JSONFileStorage):
+class DeckStorage(storageUtils.JSONFileStorage):
     """
-    Utility object to load and save a StudySet object from a
+    Utility object to load and save a Deck object from a
     file on the machine.
     """
 
     def load(self):
         """
-        Load and return the StudySet contain in this file.
+        Load and return the Deck contain in this file.
 
-        :returns: a StudySet object
+        :returns: a Deck object
         """
-        content = super(StudySetStorage, self).load()
+        content = super(DeckStorage, self).load()
         return sets.create_from_dict(content)
 
-    def save(self, study_set):
-        """ Save the provided StudySet object in the current file. """
-        data = study_set.to_dict()
-        super(StudySetStorage, self).save(data)
+    def save(self, deck):
+        """ Save the provided Deck object in the current file. """
+        data = deck.to_dict()
+        super(DeckStorage, self).save(data)
 
-        # rename the name of this file by the title of this study set.
-        filename = storageUtils.generate_filename_from_str(study_set.title)
+        # rename the name of this file by the title of this deck.
+        filename = storageUtils.generate_filename_from_str(deck.title)
         self._rename_filename(filename)
 
 
@@ -135,31 +130,27 @@ def storage_path():
     return os.path.join(os.path.expanduser("~"), STORAGE_DIR_NAME)
 
 
-def studyset_storage_path():
-    """ Get the absolute storage path for the study sets on the machine """
-    return os.path.join(os.path.expanduser("~"), STORAGE_DIR_NAME, STUDY_SET_STORAGE_DIR)
+def deck_storage_path():
+    """Get the absolute storage path for the decks on the machine."""
+    return os.path.join(os.path.expanduser("~"), STORAGE_DIR_NAME, DECK_STORAGE_DIR)
 
 
-def selected_studyset_path():
+def selected_deck_path():
+    """Get the absolute path for the currently selected deck on the machine."""
+    return os.path.join(storage_path(), SELECTED_DECK_NAME)
+
+
+def _generate_deck_filepath(deck):
     """
-    Get the absolute path for the currently selected studyset
-    on the machine.
-    """
-    return os.path.join(storage_path(), SELECTED_STUDYSET_NAME)
+    Generate the absolute filepath in which the given deck should be stored
 
-
-def _generate_studyset_filepath(study_set):
-    """
-    Generate the absolute filepath in which the given study set
-    should be stored
-
-    :param study_set: the study set to store.
+    :param deck: the deck to store.
 
     :returns: absolute file path to the storage file.
     """
-    filename = storageUtils.generate_filename_from_str(study_set.title)
-    filename = filename + STUDY_SET_EXTENSION
-    return os.path.join(studyset_storage_path(), filename)
+    filename = storageUtils.generate_filename_from_str(deck.title)
+    filename = filename + DECK_EXTENSION
+    return os.path.join(deck_storage_path(), filename)
 
 
 def verify_storage_dir_integrity():
@@ -169,9 +160,9 @@ def verify_storage_dir_integrity():
     if not os.path.exists(path) or os.path.isfile(path):
         _create_storage_dir()
 
-    path = studyset_storage_path()
+    path = deck_storage_path()
     if not os.path.exists(path) or os.path.isfile(path):
-        _create_studyset_storage_dir()
+        _create_deck_storage_dir()
 
 
 def _create_storage_dir():
@@ -182,10 +173,10 @@ def _create_storage_dir():
     os.mkdir(storage_path())
 
 
-def _create_studyset_storage_dir():
-    """ Create the studyset storage directory in the storage directory. """
-    path = studyset_storage_path()
+def _create_deck_storage_dir():
+    """ Create the deck storage directory in the storage directory. """
+    path = deck_storage_path()
     if os.path.exists(path) and os.path.isdir(path):
-        raise IOError("Studyset storage directory already exists.")
+        raise IOError("Deck storage directory already exists.")
 
     os.mkdir(path)

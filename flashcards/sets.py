@@ -2,7 +2,7 @@
 flashcards.sets
 ~~~~~~~~~~~~~~~~~~~
 
-Contain the StudySet object and logic related to it.
+Contain the Deck object and logic related to it.
 """
 from collections import OrderedDict
 
@@ -16,14 +16,14 @@ CARDS_KEY = "cards"
 
 def create_from_dict(data):
     """
-    Construct a StudySet Object from a dictionary object.
+    Construct a Deck Object from a dictionary object.
 
     :param data: the dictionary object
 
     :raises KeyError: when dictionary is missing a needed field to create obj
     :raises ValueError: if cards field in data is not of type list
 
-    :returns: StudySet object
+    :returns: Deck object
     """
     _assert_data_is_valid(data)
 
@@ -31,12 +31,12 @@ def create_from_dict(data):
     description = data[DESC_KEY]
     study_cards = [cards.create_from_dict(card) for card in data[CARDS_KEY]]
 
-    study_set = StudySet(title, description)
+    deck = Deck(title, description)
 
     for card in study_cards:
-        study_set.add(card)
+        deck.add(card)
 
-    return study_set
+    return deck
 
 
 def _assert_data_is_valid(data):
@@ -52,17 +52,17 @@ def _assert_data_is_valid(data):
         raise ValueError("Invalid data type. %s value's should be a list" % CARDS_KEY)
 
 
-class StudySet(object):
+class Deck(object):
     """
-    A StudySet is a container of flash cards.
+    A Deck is a container of flash cards.
     """
 
     def __init__(self, title, description=None):
         """
-        Creates a Study set.
+        Creates a Deck.
 
-        :param title: The title of the study set.
-        :param description: The description for this study set.
+        :param title: The title of the deck.
+        :param description: The description for this deck.
         """
         self._title = title
         self._description = "" if description is None else description
@@ -73,7 +73,7 @@ class StudySet(object):
         return iter(self._cards)
 
     def __len__(self):
-        """Return the number of cards in this StudySet."""
+        """Return the number of cards in this Deck."""
         return len(self._cards)
 
     @property
@@ -81,7 +81,7 @@ class StudySet(object):
         """
         Get the title of this set.
 
-        :returns: The title of this Study set.
+        :returns: The title of this Deck.
         """
         return self._title
 
@@ -95,7 +95,7 @@ class StudySet(object):
         if isinstance(value, basestring):
             self._title = value
         else:
-            raise TypeError("StudySet title should be of type str")
+            raise TypeError("Deck title should be of type str")
 
     @property
     def description(self):
@@ -114,7 +114,7 @@ class StudySet(object):
         if isinstance(value, basestring):
             self._description = value
         else:
-            raise TypeError("StudySet description should be of type str")
+            raise TypeError("Deck description should be of type str")
 
     def add(self, card):
         """
@@ -129,9 +129,9 @@ class StudySet(object):
 
     def to_dict(self):
         """
-        Get a dictionary object representing this StudySet.
+        Get a dictionary object representing this Deck.
 
-        :returns: a dictionary object representation of this StudySet.
+        :returns: a dictionary object representation of this Deck.
         """
         serialized_cards = [c.to_dict() for c in self]
 
