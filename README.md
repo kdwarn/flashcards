@@ -1,15 +1,13 @@
 # flashcards
 
-Fork of [zergov/flashcards](https://github.com/zergov/flashcards), not yet on PyPI.
-
-Command line application that focus on creating decks of flashcards quickly and easily.
+Application for creating and studying flashcards from the command line. Fork of [zergov/flashcards](https://github.com/zergov/flashcards).
 
 ## Installation
 
-This fork is not yet on PyPI. To install the original:
+Use [pipx](https://github.com/pipxproject/pipx):
 
 ```
-$ sudo pip install pyflashcards
+$ pipx install git+https://github.com/kdwarn/flashcards.git
 ```
 
 ## Creating a Deck and Adding Cards
