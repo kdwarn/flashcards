@@ -25,7 +25,6 @@ def cli():
     """
     # Verify that the storage directory is present.
     storage.verify_storage_dir_integrity()
-    pass
 
 
 @click.command("status")
