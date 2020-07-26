@@ -166,22 +166,10 @@ def prompt_via_editor(filename, init_message=None):
         f.seek(0)
         filecontent = f.read()
 
-    return _remove_lines_starting_with(filecontent, "#")
-
-
-def _remove_lines_starting_with(string, start_char):
-    """
-    Utility function that removes line starting with the given character in the
-    provided str.
-
-    :param data: the str to remove lines.
-    :param start_char: the character to look for at the begining of a line.
-
-    :returns: the string without the lines starting with start_char.
-    """
+    # remove the commented out lines telling user where to put question and answer
     data = ""
-    for line in string.split("\n"):
-        if not line.startswith(start_char):
+    for line in filecontent.split("\n"):
+        if not line.startswith("#"):
             data += line + "\n"
 
     return data
