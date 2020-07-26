@@ -27,10 +27,9 @@ DECK_EXTENSION = ".json"
 SELECTED_DECK_NAME = ".SELECTEDDECK"
 
 
-class FileStorage:
+class DeckStorage:
     """
-    Utility object that manage the reading / saving of a file while assuring
-    that the file is closed once we're done using it.
+    Utility object to save and load serialized JSON objects stored in a file.
     """
 
     def __init__(self, filepath):
@@ -38,11 +37,13 @@ class FileStorage:
 
     def load(self):
         """
-        Load and return the data stored in this file.
+        Load and serialize the data in this file.
 
-        :returns: dictionary object.
+        :returns: a Deck object
         """
-        return self._load_raw_content()
+        content = self._load_raw_content()
+        content = json.loads(content)
+        return decks.create_from_dict(content)
 
     def _load_raw_content(self):
         """Read and return the raw data in this file."""
@@ -54,13 +55,21 @@ class FileStorage:
 
         return content
 
-    def save(self, content):
+    def save(self, deck):
         """
-        Save new content in this file.
+        Serialize and save the content in this file.
 
-        :param content: new content to store in this file.
+        :param content: the content to save
         """
+
+        content = deck.to_dict()
+
+        content = json.dumps(content, sort_keys=False, indent=4, separators=(",", ": "))
         self._save_raw_content(content)
+
+        # rename the name of this file by the name of this deck.
+        filename = generate_filename_from_str(deck.name)
+        self._rename_filename(filename)
 
     def _save_raw_content(self, content):
         """
@@ -89,38 +98,6 @@ class FileStorage:
         new_path = os.path.join(directory, filename + extension)
         os.rename(self._filepath, new_path)
         self._filepath = new_path
-
-
-class DeckStorage(FileStorage):
-    """
-    Utility object to save and load serialized JSON objects stored in a file.
-    """
-
-    def load(self):
-        """
-        Load and serialize the data in this file.
-
-        :returns: a Deck object
-        """
-        content = self._load_raw_content()
-        content = json.loads(content)
-        return decks.create_from_dict(content)
-
-    def save(self, deck):
-        """
-        Serialize and save the content in this file.
-
-        :param content: the content to save
-        """
-
-        data = deck.to_dict()
-
-        content = json.dumps(data, sort_keys=False, indent=4, separators=(",", ": "))
-        self._save_raw_content(content)
-
-        # rename the name of this file by the name of this deck.
-        filename = generate_filename_from_str(deck.name)
-        self._rename_filename(filename)
 
 
 def create_deck_file(deck):
