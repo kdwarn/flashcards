@@ -91,7 +91,7 @@ class FileStorage:
         self._filepath = new_path
 
 
-class JSONFileStorage(FileStorage):
+class DeckStorage(FileStorage):
     """
     Utility object to save and load serialized JSON objects stored in a file.
     """
@@ -100,39 +100,27 @@ class JSONFileStorage(FileStorage):
         """
         Load and serialize the data in this file.
 
-        :returns: a dictionary object
+        :returns: a Deck object
         """
         content = self._load_raw_content()
-        return self._deserialize(content)
+        content = json.loads(content)
+        return decks.create_from_dict(content)
 
-    def save(self, content):
+    def save(self, deck):
         """
         Serialize and save the content in this file.
 
         :param content: the content to save
         """
-        content = self._serialize(content)
+
+        data = deck.to_dict()
+
+        content = json.dumps(data, sort_keys=False, indent=4, separators=(",", ": "))
         self._save_raw_content(content)
 
-    def _serialize(self, data):
-        """
-        Serializing function used by this module.
-
-        :param data: the dictionary to serialize
-
-        :returns: a string of representation of the serialized object
-        """
-        return json.dumps(data, sort_keys=False, indent=4, separators=(",", ": "))
-
-    def _deserialize(self, string):
-        """
-        Deserializing function used by this module.
-
-        :param string: the string to deserialize
-
-        :returns: the dictionary representation of the deserialized string
-        """
-        return json.loads(string)
+        # rename the name of this file by the name of this deck.
+        filename = generate_filename_from_str(deck.name)
+        self._rename_filename(filename)
 
 
 def create_deck_file(deck):
@@ -206,31 +194,6 @@ def load_selected_deck():
     """
     item = DeckStorage(selected_deck_path())
     return item.load()
-
-
-class DeckStorage(JSONFileStorage):
-    """
-    Utility object to load and save a Deck object from a
-    file on the machine.
-    """
-
-    def load(self):
-        """
-        Load and return the Deck contain in this file.
-
-        :returns: a Deck object
-        """
-        content = super(DeckStorage, self).load()
-        return decks.create_from_dict(content)
-
-    def save(self, deck):
-        """ Save the provided Deck object in the current file. """
-        data = deck.to_dict()
-        super(DeckStorage, self).save(data)
-
-        # rename the name of this file by the name of this deck.
-        filename = generate_filename_from_str(deck.name)
-        self._rename_filename(filename)
 
 
 def storage_path():
