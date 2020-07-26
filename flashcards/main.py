@@ -114,8 +114,8 @@ def add(editormode):
     try:
         deck = storage.load_selected_deck()
 
-        question = _ask_for_question(editormode)
-        answer = _ask_for_answer(editormode)
+        question = ask_for_question(editormode)
+        answer = ask_for_answer(editormode)
 
         # Create the card and add it to the deck
         # Update the deck by overwriting the old information.
@@ -128,7 +128,7 @@ def add(editormode):
         click.echo("There is no deck currently selected. Select a deck to add a card.")
 
 
-def _ask_for_question(editor_mode=False):
+def ask_for_question(editor_mode=False):
     """Prompt the user for a question."""
     if editor_mode:
         message = "\n# Write your question."
@@ -136,7 +136,7 @@ def _ask_for_question(editor_mode=False):
     return click.prompt("Question")
 
 
-def _ask_for_answer(editor_mode=False):
+def ask_for_answer(editor_mode=False):
     """Prompt the user for an answer."""
     if editor_mode:
         message = "\n# Write your answer."
