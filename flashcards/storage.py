@@ -11,19 +11,8 @@ import os
 
 from flashcards import decks
 
-# The directory name where all of the Flashcards data is stored on the machine.
 STORAGE_DIR_NAME = ".flashcards"
-
-
-# The directory name where all of the Flashcards's deck data is stored on the machine.
-DECK_STORAGE_DIR = "decks"
-
-
-# Default extension of a deck file on the machine
 DECK_EXTENSION = ".json"
-
-
-# Selected deck filename
 SELECTED_DECK_NAME = ".SELECTEDDECK"
 
 
@@ -178,11 +167,6 @@ def storage_path():
     return os.path.join(os.path.expanduser("~"), STORAGE_DIR_NAME)
 
 
-def deck_storage_path():
-    """Get the absolute storage path for the decks on the machine."""
-    return os.path.join(os.path.expanduser("~"), STORAGE_DIR_NAME, DECK_STORAGE_DIR)
-
-
 def selected_deck_path():
     """Get the absolute path for the currently selected deck on the machine."""
     return os.path.join(storage_path(), SELECTED_DECK_NAME)
@@ -198,7 +182,7 @@ def _generate_deck_filepath(deck):
     """
     filename = generate_filename_from_str(deck.name)
     filename = filename + DECK_EXTENSION
-    return os.path.join(deck_storage_path(), filename)
+    return os.path.join(storage_path(), filename)
 
 
 def verify_storage_dir_integrity():
@@ -208,10 +192,6 @@ def verify_storage_dir_integrity():
     if not os.path.exists(path) or os.path.isfile(path):
         _create_storage_dir()
 
-    path = deck_storage_path()
-    if not os.path.exists(path) or os.path.isfile(path):
-        _create_deck_storage_dir()
-
 
 def _create_storage_dir():
     """ Create the storage directory in the home folder. """
@@ -219,15 +199,6 @@ def _create_storage_dir():
         raise IOError("Storage directory already exists.")
 
     os.mkdir(storage_path())
-
-
-def _create_deck_storage_dir():
-    """ Create the deck storage directory in the storage directory. """
-    path = deck_storage_path()
-    if os.path.exists(path) and os.path.isdir(path):
-        raise IOError("Deck storage directory already exists.")
-
-    os.mkdir(path)
 
 
 def generate_filename_from_str(string):

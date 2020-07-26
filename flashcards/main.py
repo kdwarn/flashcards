@@ -38,6 +38,7 @@ def status_cmd():
         - deck description
         - number of cards
     """
+
     try:
         deck = storage.load_selected_deck()
 
@@ -65,7 +66,7 @@ def study_cmd(deck, shuffle):
         except IOError:
             return click.echo("No deck currently selected.")
 
-    deck_path = os.path.join(storage.deck_storage_path(), deck + ".json")
+    deck_path = os.path.join(storage.storage_path(), deck + ".json")
     deck = storage.load_deck(deck_path).load()
     if shuffle:
         studysession = study.get_study_session_template("shuffled")
@@ -100,7 +101,7 @@ def select(deck):
 
     New cards will be added to this deck, and a study session will open this deck.
     """
-    deck_path = os.path.join(storage.deck_storage_path(), deck + ".json")
+    deck_path = os.path.join(storage.storage_path(), deck + ".json")
     storage.link_selected_deck(deck_path)
     deck_obj = storage.load_deck(deck_path).load()
     click.echo("Selected deck: %s" % deck_obj.name)
