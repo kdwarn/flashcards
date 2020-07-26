@@ -8,7 +8,6 @@ import getpass
 import pytest
 
 from flashcards import storage
-from flashcards.utils import storage as storageUtils
 from flashcards.storage import DeckStorage
 from flashcards.decks import Deck
 from flashcards.cards import StudyCard
