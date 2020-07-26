@@ -30,19 +30,14 @@ class DeckStorage:
 
         :returns: a Deck object
         """
-        content = self._load_raw_content()
-        content = json.loads(content)
-        return decks.create_from_dict(content)
-
-    def _load_raw_content(self):
-        """Read and return the raw data in this file."""
         assert_valid_file(self._filepath)
 
         content = None
         with open(self._filepath, "r") as file:
             content = file.read()
 
-        return content
+        content = json.loads(content)
+        return decks.create_from_dict(content)
 
     def save(self, deck):
         """
@@ -54,23 +49,15 @@ class DeckStorage:
         content = deck.to_dict()
 
         content = json.dumps(content, sort_keys=False, indent=4, separators=(",", ": "))
-        self._save_raw_content(content)
 
-        # rename the name of this file by the name of this deck.
-        filename = generate_filename_from_str(deck.name)
-        self._rename_filename(filename)
-
-    def _save_raw_content(self, content):
-        """
-        Open and write the provided data in this file.
-        Overwriting the data already stored in this file.
-
-        :param content: the content to store in this file.
-        """
         assert_valid_file(self._filepath)
 
         with open(self._filepath, "w") as file:
             file.write(content)
+
+        # rename the name of this file by the name of this deck.
+        filename = generate_filename_from_str(deck.name)
+        self._rename_filename(filename)
 
     def _rename_filename(self, filename):
         """
