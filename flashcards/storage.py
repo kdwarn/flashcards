@@ -32,7 +32,6 @@ class DeckStorage:
         """
         assert_valid_file(self._filepath)
 
-        content = None
         with open(self._filepath, "r") as file:
             content = file.read()
 
