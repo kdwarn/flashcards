@@ -110,9 +110,9 @@ def create_deck_file(deck):
 
 def store_deck(deck):
     """
-    Store the supplied deck the storage folder.
+    Store the supplied deck in the storage folder.
 
-    An exception is raised if the file does not exists.
+    An exception is raised if the file does not exist.
 
     :param deck: the deck to store.
     """
@@ -190,15 +190,7 @@ def verify_storage_dir_integrity():
 
     path = storage_path()
     if not os.path.exists(path) or os.path.isfile(path):
-        _create_storage_dir()
-
-
-def _create_storage_dir():
-    """ Create the storage directory in the home folder. """
-    if os.path.exists(storage_path()) and os.path.isdir(storage_path()):
-        raise IOError("Storage directory already exists.")
-
-    os.mkdir(storage_path())
+        os.mkdir(storage_path())
 
 
 def generate_filename_from_str(string):
