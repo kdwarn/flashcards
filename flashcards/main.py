@@ -29,25 +29,18 @@ def cli():
 
 @click.command("status")
 def status_cmd():
-    """
-    Show status of the application.
-
-    Displaying the currently selected deck.
-        - deck name
-        - deck description
-        - number of cards
-    """
+    """Show selected deck, if any, and details about it."""
 
     try:
         deck = storage.load_selected_deck()
-
-        click.echo("Currently selected deck: %s \n" % deck.name)
-        click.echo("[NUMBER OF CARDS]: %s \n" % len(deck))
-        click.echo("[DESCRIPTION]:")
-        click.echo(deck.description + "\n")
-
     except IOError:
         click.echo("No deck currently selected.")
+        return
+
+    click.echo(f"\nCurrently selected deck: {deck.name}")
+    click.echo(f"Number of cards: {len(deck)}")
+    if deck.description:
+        click.echo(f"Description: {deck.description}\n")
 
 
 @click.command("study")
@@ -113,58 +106,49 @@ def add(editormode):
     """ Add a card to the currently selected deck. """
     try:
         deck = storage.load_selected_deck()
-
-        question = ask_for_question(editormode)
-        answer = ask_for_answer(editormode)
-
-        # Create the card and add it to the deck
-        # Update the deck by overwriting the old information.
-        deck.add(StudyCard(question, answer))
-        storage.store_deck(deck)
-
-        click.echo("Card added to the deck!")
-
     except IOError:
         click.echo("There is no deck currently selected. Select a deck to add a card.")
+
+    question = ask_for_question(editormode)
+    answer = ask_for_answer(editormode)
+    # Create the card and add it to the deck
+    # Update the deck by overwriting the old information.
+    deck.add(StudyCard(question, answer))
+    storage.store_deck(deck)
+
+    click.echo("Card added to the deck!")
 
 
 def ask_for_question(editor_mode=False):
     """Prompt the user for a question."""
     if editor_mode:
-        message = "\n# Write your question."
-        return prompt_via_editor("TMP_QUESTION_", message)
+        return prompt_via_editor("TMP_QUESTION_", "\n# Write your question above.")
     return click.prompt("Question")
 
 
 def ask_for_answer(editor_mode=False):
     """Prompt the user for an answer."""
     if editor_mode:
-        message = "\n# Write your answer."
-        return prompt_via_editor("TMP_ANSWER_", message)
+        return prompt_via_editor("TMP_ANSWER_", "\n# Write your answer above.")
     return click.prompt("Answer")
 
 
-def prompt_via_editor(filename, init_message=None):
+def prompt_via_editor(filename, message):
     """
     Open a temp file in an editor and return the input from the user.
-
-    :param init_message: an initial message to write in the editor.
 
     :returns: the input str from the user.
     """
     editor = os.environ.get("EDITOR", "vim")
     filecontent = ""
-
-    with tempfile.NamedTemporaryFile(prefix=filename, suffix=".tmp") as f:
-        # write initial message
-        if init_message is not None:
-            f.write(init_message)
+    with tempfile.NamedTemporaryFile(prefix=filename, suffix=".tmp", mode="r+") as f:
+        f.write(message)  # start the file with the instructions
 
         f.flush()
         call([editor, f.name])  # call the editor to open this file.
 
-        f.seek(0)
-        filecontent = f.read()
+        f.seek(0)  # put us back to the top of the file
+        filecontent = f.read()  # copy as string
 
     # remove the commented out lines telling user where to put question and answer
     data = ""
@@ -172,7 +156,7 @@ def prompt_via_editor(filename, init_message=None):
         if not line.startswith("#"):
             data += line + "\n"
 
-    return data
+    return data.rstrip("\n")
 
 
 # Add the subcommands to this main entry point.
