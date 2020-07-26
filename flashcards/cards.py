@@ -6,10 +6,6 @@ Contain the StudyCard object and logic related to it.
 """
 from collections import OrderedDict
 
-# Serialization key's
-QUESTION_KEY = "question"
-ANSWER_KEY = "answer"
-
 
 def create_from_dict(data):
     """
@@ -21,13 +17,13 @@ def create_from_dict(data):
 
     :returns: StudyCard object
     """
-    if QUESTION_KEY not in data:
-        raise KeyError("Invalid data string. %s key is missing" % QUESTION_KEY)
-    if ANSWER_KEY not in data:
-        raise KeyError("Invalid data string. %s key is missing" % ANSWER_KEY)
+    if "question" not in data:
+        raise KeyError("Invalid data string. 'question' key is missing")
+    if "answer" not in data:
+        raise KeyError("Invalid data string. 'answer' key is missing")
 
-    question = data[QUESTION_KEY]
-    answer = data[ANSWER_KEY]
+    question = data["question"]
+    answer = data["answer"]
 
     return StudyCard(question, answer)
 
@@ -56,5 +52,5 @@ class StudyCard(object):
 
         :returns: a dictionary object representation of this StudyCard
         """
-        data = ((QUESTION_KEY, self.question), (ANSWER_KEY, self.answer))
+        data = (("question", self.question), ("answer", self.answer))
         return OrderedDict(data)
