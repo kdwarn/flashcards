@@ -7,8 +7,8 @@ Contain the StudyCard object and logic related to it.
 from collections import OrderedDict
 
 # Serialization key's
-QUESTION_KEY = 'question'
-ANSWER_KEY = 'answer'
+QUESTION_KEY = "question"
+ANSWER_KEY = "answer"
 
 
 def create_from_dict(data):
@@ -68,10 +68,10 @@ class StudyCard(object):
 
         :raises TypeError: If the question is not of type str
         """
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             self._question = value
         else:
-            raise TypeError('Question should be of type str')
+            raise TypeError("Question should be of type str")
 
     @property
     def answer(self):
@@ -91,10 +91,10 @@ class StudyCard(object):
 
         :raises TypeError: If the question is not of type str
         """
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             self._answer = value
         else:
-            raise TypeError('Answer should be of type str')
+            raise TypeError("Answer should be of type str")
 
     def to_dict(self):
         """

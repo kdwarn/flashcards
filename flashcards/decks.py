@@ -90,7 +90,7 @@ class Deck:
 
         :param value: The new name for this deck
         """
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             self._name = value
         else:
             raise TypeError("Deck name should be of type str")
@@ -109,7 +109,7 @@ class Deck:
 
         :param value: The new description for this deck
         """
-        if isinstance(value, basestring):
+        if isinstance(value, str):
             self._description = value
         else:
             raise TypeError("Deck description should be of type str")

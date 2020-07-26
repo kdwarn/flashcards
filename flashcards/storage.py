@@ -121,7 +121,7 @@ class DeckStorage(storageUtils.JSONFileStorage):
         super(DeckStorage, self).save(data)
 
         # rename the name of this file by the name of this deck.
-        filename = storageUtils.generate_filename_from_str(deck.name)
+        filename = generate_filename_from_str(deck.name)
         self._rename_filename(filename)
 
 
@@ -148,7 +148,7 @@ def _generate_deck_filepath(deck):
 
     :returns: absolute file path to the storage file.
     """
-    filename = storageUtils.generate_filename_from_str(deck.name)
+    filename = generate_filename_from_str(deck.name)
     filename = filename + DECK_EXTENSION
     return os.path.join(deck_storage_path(), filename)
 
@@ -180,3 +180,24 @@ def _create_deck_storage_dir():
         raise IOError("Deck storage directory already exists.")
 
     os.mkdir(path)
+
+
+def generate_filename_from_str(string):
+    """
+    Generate a valid filename from a given string.
+
+    - replace all spaces and dashes with underscore.
+    - only keeps alphanumerical chars
+
+    :param string: the string to create the filename from
+
+    :returns: the generated string, a valid filename
+    """
+    keepchars = [" ", "-", "_"]  # characters to keep in the filename
+    swapchars = {" ": "_", "-": "_"}  # keys are swapped by their values
+
+    for key, value in swapchars.items():
+        string = string.replace(key, value)
+
+    _ = [c for c in string if c.isalnum() or c == " " or c in keepchars]
+    return "".join(_).rstrip()

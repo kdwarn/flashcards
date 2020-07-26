@@ -8,27 +8,6 @@ import os
 import json
 
 
-def generate_filename_from_str(string):
-    """
-    Generate a valid filename from a given string.
-
-    - replace all spaces and dashes with underscore.
-    - only keeps alphanumerical chars
-
-    :param string: the string to create the filename from
-
-    :returns: the generated string, a valid filename
-    """
-    keepchars = [" ", "-", "_"]  # characters to keep in the filename
-    swapchars = {" ": "_", "-": "_"}  # keys are swapped by their values
-
-    for key, value in swapchars.items():
-        string = string.replace(key, value)
-
-    _ = [c for c in string if c.isalnum() or c is " " or c in keepchars]
-    return "".join(_).rstrip()
-
-
 def assert_valid_file(filepath):
     """
     Raise an exception if the file at the given path is not a file or
