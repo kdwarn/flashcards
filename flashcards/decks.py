@@ -9,10 +9,6 @@ from collections import OrderedDict
 from flashcards import cards
 from flashcards.cards import StudyCard
 
-NAME_KEY = "name"
-DESC_KEY = "description"
-CARDS_KEY = "cards"
-
 
 def create_from_dict(data):
     """
@@ -25,31 +21,22 @@ def create_from_dict(data):
 
     :returns: Deck object
     """
-    _assert_data_is_valid(data)
 
-    name = data[NAME_KEY]
-    description = data[DESC_KEY]
-    study_cards = [cards.create_from_dict(card) for card in data[CARDS_KEY]]
+    if "name" not in data:
+        raise KeyError("Invalid data string. 'name' key is missing")
+    if "description" not in data:
+        raise KeyError("Invalid data string. 'description' key is missing")
+    if "cards" not in data:
+        raise KeyError("Invalid data string. 'cards' key is missing")
+    if not isinstance(data["cards"], list):
+        raise ValueError("Invalid data type. 'cards' value should be a list")
 
-    deck = Deck(name, description)
+    deck = Deck(data["name"], data["description"])
 
-    for card in study_cards:
+    for card in [cards.create_from_dict(card) for card in data["cards"]]:
         deck.add(card)
 
     return deck
-
-
-def _assert_data_is_valid(data):
-    """ Check that data received in `create_from_dict` has a valid format """
-
-    if NAME_KEY not in data:
-        raise KeyError("Invalid data string. %s key is missing" % NAME_KEY)
-    if DESC_KEY not in data:
-        raise KeyError("Invalid data string. %s key is missing" % DESC_KEY)
-    if CARDS_KEY not in data:
-        raise KeyError("Invalid data string. %s key is missing" % CARDS_KEY)
-    if not isinstance(data[CARDS_KEY], list):
-        raise ValueError("Invalid data type. %s value's should be a list" % CARDS_KEY)
 
 
 class Deck:
@@ -62,57 +49,17 @@ class Deck:
         :param name: The name of the deck.
         :param description: The description for this deck.
         """
-        self._name = name
-        self._description = "" if description is None else description
-        self._cards = []
+        self.name = name
+        self.description = "" if description is None else description
+        self.cards = []
 
     def __iter__(self):
         """Iter through the cards of this deck."""
-        return iter(self._cards)
+        return iter(self.cards)
 
     def __len__(self):
         """Return the number of cards in this Deck."""
-        return len(self._cards)
-
-    @property
-    def name(self):
-        """
-        Get the name of this deck.
-
-        :returns: The name of this Deck.
-        """
-        return self._name
-
-    @name.setter
-    def name(self, value):
-        """
-        Set the name of this deck.
-
-        :param value: The new name for this deck
-        """
-        if isinstance(value, str):
-            self._name = value
-        else:
-            raise TypeError("Deck name should be of type str")
-
-    @property
-    def description(self):
-        """
-        Get the description of this deck.
-        """
-        return self._description
-
-    @description.setter
-    def description(self, value):
-        """
-        Set the description of this deck.
-
-        :param value: The new description for this deck
-        """
-        if isinstance(value, str):
-            self._description = value
-        else:
-            raise TypeError("Deck description should be of type str")
+        return len(self.cards)
 
     def add(self, card):
         """
@@ -121,7 +68,7 @@ class Deck:
         :param card: A subclass of flashcards.cards.StudyCard object.
         """
         if isinstance(card, StudyCard):
-            self._cards.append(card)
+            self.cards.append(card)
         else:
             raise TypeError("A Deck can only contain instances of StudyCard objects.")
 
@@ -134,9 +81,9 @@ class Deck:
         serialized_cards = [c.to_dict() for c in self]
 
         data = (
-            (NAME_KEY, self.name),
-            (DESC_KEY, self.description),
-            (CARDS_KEY, serialized_cards),
+            ("name", self.name),
+            ("description", self.description),
+            ("cards", serialized_cards),
         )
 
         return OrderedDict(data)

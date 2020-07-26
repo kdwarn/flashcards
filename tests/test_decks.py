@@ -17,8 +17,8 @@ def test_create_from_dict():
 
     assert study_set.name == "Math"
     assert study_set.description == "Math-145"
-    assert study_set._cards[0].question == "2+2=?"
-    assert study_set._cards[0].answer == "4"
+    assert study_set.cards[0].question == "2+2=?"
+    assert study_set.cards[0].answer == "4"
 
 
 def test_StudySet_exists():
@@ -38,26 +38,16 @@ def test_set_name():
     assert math_deck.name == "Math1"
 
 
-def test_bad_name_raises_error():
-    with pytest.raises(TypeError):
-        math_deck.name = 1557
-
-
 def test_set_description():
     math_deck.description = "A study set about math"
     assert math_deck.description == "A study set about math"
 
 
-def test_bad_description_raises_error():
-    with pytest.raises(TypeError):
-        math_deck.description = 1557
-
-
 def test_add():
     card = StudyCard("What is my name?", "Jonathan")
     math_deck.add(card)
-    assert len(math_deck._cards) == 1
-    assert card in math_deck._cards
+    assert len(math_deck.cards) == 1
+    assert card in math_deck.cards
 
 
 def test_set_add_wrong_type():
