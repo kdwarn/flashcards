@@ -52,7 +52,7 @@ def study_cmd(deck, ordered):
     """
     Start a study session. By default, the cards are shuffled.
 
-    If DECK not provided, study the selected deck, if any.
+    If DECK is not provided, study the selected deck, if any.
     """
     if not deck:
         try:

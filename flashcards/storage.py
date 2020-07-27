@@ -38,10 +38,6 @@ class DeckStorage:
 
         # rename the name of this file by the name of this deck.
         filename = generate_filename_from_str(deck.name)
-        self._rename_filename(filename)
-
-    def _rename_filename(self, filename):
-        """Without changing the path and the extension, rename the base name of the file."""
         directory = os.path.dirname(self.filepath)  # keep the same path
         extension = os.path.splitext(self.filepath)[1]  # keep the extension
 
