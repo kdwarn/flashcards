@@ -1,103 +1,32 @@
-"""
-flashcards.study
-~~~~~~~~~~~~~~~~~~~
-
-Contain the StudySession logic.
-This module should host the class that subclasses BaseStudySession.
-"""
+"""Display cards' questions and answers to user."""
 import random
 import sys
 
 import click
 
 
-class BaseStudySession(object):
-    """
-    Basic Object that encapsulate a Study session.
-    This object cycle through an iterator of StudyCard.
+def study(cards, mode="linear"):
+    """Iterate through cards, pausing for user input after each question/answer."""
+    question_num = len(cards)
+    question_count = 1
 
-    The algorithm sequence stays the same, each iteration of cards follows this
-    pattern:
+    cards_list = list(cards)
 
-        1) Show the question
-        2) Wait for user input
-        3) Show the answer
-        4) Wait for user input
-    """
-
-    def start(self, cards):
-        """
-        Start a StudySession with the iterator of cards given.
-
-        :param cards: cards iterator.
-        """
-        self.question_num = len(cards)
-        self.question_count = 1  # starts at 1 for display convenience
-
-        for card in cards:
-            click.clear()
-            self.show_question(card.question)
-            self.show_answer(card.answer)
-            click.echo("Press any key to show the next question, and 'q' to quit.")
-            key_press = click.getchar()
-            if key_press == "q":
-                sys.exit()
-
-    def show_question(self, question):
-        """
-        Display the current question to the user.
-
-        :param question: the question to display
-        """
-        header = "[QUESTION %s / %s]" % (self.question_count, self.question_num)
-        click.echo(header)
-        click.echo("\n" + question + "\n")
-        click.pause("...")
-
-    def show_answer(self, answer):
-        """
-        Display the answer to the question.
-
-        :param answer: the answer
-        """
-        self.question_count += 1
-        click.echo("\n" + answer + "\n")
-
-
-class ShuffledStudySession(BaseStudySession):
-    """
-    StudySession that shuffles the cards before iterating on them.
-    """
-
-    def start(self, cards):
-        """
-        Start a studySession with the iterator of cards given.
-        The cards are shuffled before beeing displayed.
-
-        :param cards: cards iterator.
-        """
-        # Shuffle the given cards iterator
-        cards_list = list(cards)
+    if mode == "shuffled":
         random.shuffle(cards_list)
 
-        super(ShuffledStudySession, self).start(cards_list)
+    for card in cards_list:
+        click.clear()
 
+        header = "[QUESTION %s / %s]" % (question_count, question_num)
+        click.echo(header)
+        click.echo("\n" + card.question + "\n")
+        click.pause("...")
 
-# Association of Study session modes to the respective class instance.
-STUDY_MODES = {"linear": BaseStudySession, "shuffled": ShuffledStudySession}
+        question_count += 1
+        click.echo("\n" + card.answer + "\n")
 
-
-def get_study_session_template(sessionMode):
-    """
-    Depending on the sessionMode input entered by the user,
-    return the appropriate instance of BaseStudySession.
-
-    :param sessionMode: the desired study mode (default to 'linear')
-
-    :returns: instance of BaseStudySession
-    """
-
-    if sessionMode not in STUDY_MODES:
-        return BaseStudySession()
-    else:
-        return STUDY_MODES[sessionMode]()
+        click.echo("Press any key to show the next question, and 'q' to quit.")
+        key_press = click.getchar()
+        if key_press == "q":
+            return

@@ -61,10 +61,9 @@ def study_cmd(deck, shuffle):
     deck_path = os.path.join(storage.storage_path(), deck + ".json")
     deck = storage.load_deck(deck_path).load()
     if shuffle:
-        studysession = study.get_study_session_template("shuffled")
+        study.study(deck.cards, mode="shuffled")
     else:
-        studysession = study.get_study_session_template("linear")
-    studysession.start(deck)
+        study.study(deck.cards)
 
 
 @click.command("create")
