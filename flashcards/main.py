@@ -23,8 +23,8 @@ def cli():
     Command line application that focus on creating decks of flashcards
     quickly and easily.
     """
-    # Verify that the storage directory is present.
-    storage.verify_storage_dir_integrity()
+    # Create the storage directory if it doesn't already exist
+    storage.create_storage_directory()
 
 
 @click.command("status")
@@ -40,7 +40,8 @@ def status_cmd():
     click.echo(f"\nCurrently selected deck: {deck.name}")
     click.echo(f"Number of cards: {len(deck)}")
     if deck.description:
-        click.echo(f"Description: {deck.description}\n")
+        click.echo(f"Description: {deck.description}")
+    click.echo("")
 
 
 @click.command("study")
@@ -92,7 +93,7 @@ def select(deck):
     New cards will be added to this deck, and a study session will open this deck.
     """
     deck_path = os.path.join(storage.storage_path(), deck + ".json")
-    storage.link_selected_deck(deck_path)
+    storage.link_selected_deck(deck_path)  # create sym link to deck from .SELECTEDLINK
     deck_obj = storage.load_deck(deck_path).load()
     click.echo("Selected deck: %s" % deck_obj.name)
     click.echo("New cards will be added to this deck.")
