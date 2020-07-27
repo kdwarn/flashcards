@@ -1,32 +1,25 @@
 """Display cards' questions and answers to user."""
 import random
-import sys
 
 import click
 
 
-def study(cards, mode="linear"):
+def study(cards, ordered=False):
     """Iterate through cards, pausing for user input after each question/answer."""
     question_num = len(cards)
-    question_count = 1
 
-    cards_list = list(cards)
+    if not ordered:
+        random.shuffle(cards)
 
-    if mode == "shuffled":
-        random.shuffle(cards_list)
-
-    for card in cards_list:
+    for i, card in enumerate(cards, start=1):
         click.clear()
-
-        header = "[QUESTION %s / %s]" % (question_count, question_num)
-        click.echo(header)
+        click.echo(f"QUESTION {i} / {question_num}")
         click.echo("\n" + card.question + "\n")
         click.pause("...")
-
-        question_count += 1
         click.echo("\n" + card.answer + "\n")
-
         click.echo("Press any key to show the next question, and 'q' to quit.")
         key_press = click.getchar()
         if key_press == "q":
             return
+
+    click.echo("All done!")

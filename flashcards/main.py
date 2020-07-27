@@ -45,10 +45,12 @@ def status_cmd():
 
 @click.command("study")
 @click.argument("deck", default="")
-@click.option("--shuffle", is_flag=True)
-def study_cmd(deck, shuffle):
+@click.option(
+    "--ordered", is_flag=True, help="Study the cards in the order they were added to the deck."
+)
+def study_cmd(deck, ordered):
     """
-    Start a study session.
+    Start a study session. By default, the cards are shuffled.
 
     If DECK not provided, study the selected deck, if any.
     """
@@ -60,10 +62,7 @@ def study_cmd(deck, shuffle):
 
     deck_path = os.path.join(storage.storage_path(), deck + ".json")
     deck = storage.load_deck(deck_path).load()
-    if shuffle:
-        study.study(deck.cards, mode="shuffled")
-    else:
-        study.study(deck.cards)
+    study.study(deck.cards, ordered=ordered)
 
 
 @click.command("create")
