@@ -69,9 +69,9 @@ def generate_filename_from_str(string):
     return "".join(_).rstrip()
 
 
-def generate_deck_filepath(deck):
+def generate_deck_filepath(deck_name):
     """Generate the absolute filepath in which the given deck should be stored."""
-    filename = generate_filename_from_str(deck.name)
+    filename = generate_filename_from_str(deck_name)
     filename = filename + DECK_EXTENSION
     return os.path.join(storage_path(), filename)
 

@@ -34,8 +34,7 @@ def status_cmd():
     try:
         deck = storage.load_selected_deck()
     except IOError:
-        click.echo("No deck currently selected.")
-        return
+        return click.echo("No deck currently selected.")
 
     click.echo(f"\nCurrently selected deck: {deck.name}")
     click.echo(f"Number of cards: {len(deck)}")
@@ -61,9 +60,17 @@ def study_cmd(deck, ordered):
         except IOError:
             return click.echo("No deck currently selected.")
 
-    deck_path = os.path.join(storage.storage_path(), deck + ".json")
-    deck = storage.load_deck(deck_path).load()
-    study.study(deck.cards, ordered=ordered)
+    deck_path = storage.generate_deck_filepath(deck)
+
+    try:
+        deck = storage.load_deck(deck_path).load()
+    except IOError:
+        return click.echo("No deck by that name found.")
+
+    if deck.cards:
+        study.study(deck.cards, ordered=ordered)
+    else:
+        click.echo(f"The {deck.name} deck currently has no cards.")
 
 
 @click.command("create")
@@ -92,7 +99,11 @@ def select(deck):
 
     New cards will be added to this deck, and a study session will open this deck.
     """
-    deck_path = os.path.join(storage.storage_path(), deck + ".json")
+    deck_path = storage.generate_deck_filepath(deck)
+    try:
+        storage.assert_valid_file(deck_path)
+    except IOError:
+        return click.echo("No deck by that name found.")
     storage.link_selected_deck(deck_path)  # create sym link to deck from .SELECTEDLINK
     deck_obj = storage.load_deck(deck_path).load()
     click.echo("Selected deck: %s" % deck_obj.name)
@@ -106,7 +117,7 @@ def add(editormode):
     try:
         deck = storage.load_selected_deck()
     except IOError:
-        click.echo("There is no deck currently selected. Select a deck to add a card.")
+        return click.echo("There is no deck currently selected. Select a deck to add a card.")
 
     question = ask_for_question(editormode)
     answer = ask_for_answer(editormode)
