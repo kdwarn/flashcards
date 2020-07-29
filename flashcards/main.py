@@ -83,7 +83,10 @@ def create(name, desc):
     If this deck does not exist, it is created.
     """
     deck = decks.Deck(name, desc)
-    deck.create_file()
+    try:
+        deck.create_file()
+    except IOError:
+        return click.echo("A deck with that name already exists; aborting.")
     deck.save()
 
     # automatically select this deck
