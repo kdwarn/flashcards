@@ -11,7 +11,6 @@ import tempfile
 
 import click
 
-from flashcards import storage
 from flashcards import study
 from flashcards import decks
 from flashcards.cards import StudyCard
@@ -24,7 +23,7 @@ def cli():
     quickly and easily.
     """
     # Create the storage directory if it doesn't already exist
-    storage.create_storage_directory()
+    decks.create_storage_directory()
 
 
 @click.command("status")
@@ -32,7 +31,7 @@ def status_cmd():
     """Show selected deck, if any, and details about it."""
 
     try:
-        deck = storage.DeckStorage(storage.selected_deck_path()).load()
+        deck = decks.DeckStorage(decks.selected_deck_path()).load()
     except IOError:
         return click.echo("No deck currently selected.")
 
@@ -56,14 +55,14 @@ def study_cmd(deck, ordered):
     """
     if not deck:
         try:
-            deck = storage.DeckStorage(storage.selected_deck_path()).load().name
+            deck = decks.DeckStorage(decks.selected_deck_path()).load().name
         except IOError:
             return click.echo("No deck currently selected.")
 
-    deck_path = storage.generate_deck_filepath(deck)
+    deck_path = decks.generate_deck_filepath(deck)
 
     try:
-        deck = storage.DeckStorage(deck_path).load()
+        deck = decks.DeckStorage(deck_path).load()
     except IOError:
         return click.echo("No deck by that name found.")
 
@@ -84,10 +83,10 @@ def create(name, desc):
     If this deck does not exist, it is created.
     """
     deck = decks.Deck(name, desc)
-    filepath = storage.create_deck_file(deck)
+    filepath = decks.create_deck_file(deck)
 
     # automatically select this deck
-    storage.link_selected_deck(filepath)
+    decks.link_selected_deck(filepath)
     click.echo("Deck created!")
 
 
@@ -99,13 +98,13 @@ def select(deck):
 
     New cards will be added to this deck, and a study session will open this deck.
     """
-    deck_path = storage.generate_deck_filepath(deck)
+    deck_path = decks.generate_deck_filepath(deck)
     try:
-        storage.check_valid_file(deck_path)
+        decks.check_valid_file(deck_path)
     except IOError:
         return click.echo("No deck by that name found.")
-    storage.link_selected_deck(deck_path)  # create sym link to deck from .SELECTEDLINK
-    deck_obj = storage.DeckStorage(deck_path).load()
+    decks.link_selected_deck(deck_path)  # create sym link to deck from .SELECTEDLINK
+    deck_obj = decks.DeckStorage(deck_path).load()
     click.echo(f"Selected deck: {deck_obj.name}")
     click.echo("New cards will be added to this deck.")
 
@@ -115,7 +114,7 @@ def select(deck):
 def add(editormode):
     """ Add a card to the currently selected deck. """
     try:
-        deck = storage.DeckStorage(storage.selected_deck_path()).load()
+        deck = decks.DeckStorage(decks.selected_deck_path()).load()
     except IOError:
         return click.echo("There is no deck currently selected. Select a deck to add a card.")
 
@@ -124,7 +123,7 @@ def add(editormode):
     # Create the card and add it to the deck
     # Update the deck by overwriting the old information.
     deck.add(StudyCard(question, answer))
-    storage.store_deck(deck)
+    decks.store_deck(deck)
 
     click.echo("Card added to the deck!")
 
