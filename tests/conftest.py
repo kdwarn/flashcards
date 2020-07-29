@@ -9,7 +9,7 @@ from flashcards import decks
 
 @pytest.fixture
 def storage_path(tmp_path, monkeypatch):
-    """Monkeypath decks.storage.path() so that we use a tmp directory."""
+    """Monkeypatch decks.storage.path() so that we use a tmp directory."""
 
     def mockreturn():
         return Path(tmp_path, decks.STORAGE_DIR_NAME)
@@ -21,7 +21,7 @@ def storage_path(tmp_path, monkeypatch):
 
 @pytest.fixture
 def create_storage_directory(storage_path, monkeypatch):
-    """Monkey path create_storage_path, so we create the dir as named in fixture storage_path."""
+    """Monkeypatch create_storage_path, so we create the dir as named in fixture storage_path."""
 
     def mockreturn():
         if not os.path.exists(storage_path):

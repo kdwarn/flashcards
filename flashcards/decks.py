@@ -6,50 +6,20 @@ Contain the Deck object and logic related to it.
 """
 from collections import OrderedDict
 import errno
-from typing import Dict
 import json
 import os
 from pathlib import Path
+from typing import Dict
 
 import click
 
 from flashcards import cards
 from flashcards import decks
-from flashcards.cards import StudyCard
 
 
 STORAGE_DIR_NAME = ".flashcards"
 DECK_EXTENSION = ".json"
 SELECTED_DECK_NAME = ".SELECTEDDECK"
-
-
-def create_from_dict(data):
-    """
-    Construct a Deck Object from a dictionary object.
-
-    :param data: the dictionary object
-
-    :raises KeyError: when dictionary is missing a needed field to create obj
-    :raises ValueError: if cards field in data is not of type list
-
-    :returns: Deck object
-    """
-
-    if "name" not in data:
-        raise KeyError("Invalid data string. 'name' key is missing")
-    if "description" not in data:
-        raise KeyError("Invalid data string. 'description' key is missing")
-    if "cards" not in data:
-        raise KeyError("Invalid data string. 'cards' key is missing")
-    if not isinstance(data["cards"], list):
-        raise ValueError("Invalid data type. 'cards' value should be a list")
-
-    deck = Deck(data["name"], data["description"])
-
-    for card in [cards.create_from_dict(card) for card in data["cards"]]:
-        deck.add(card)
-
-    return deck
 
 
 class Deck:
@@ -65,6 +35,7 @@ class Deck:
         self.name = name
         self.description = "" if description is None else description
         self.cards = []
+        self.filepath = generate_deck_filepath(name)
 
     def __iter__(self):
         """Iter through the cards of this deck."""
@@ -80,7 +51,7 @@ class Deck:
 
         :param card: A subclass of flashcards.cards.StudyCard object.
         """
-        if isinstance(card, StudyCard):
+        if isinstance(card, cards.StudyCard):
             self.cards.append(card)
         else:
             raise TypeError("A Deck can only contain instances of StudyCard objects.")
@@ -101,32 +72,49 @@ class Deck:
 
         return OrderedDict(data)
 
+    def create_file(self):
+        """Create a file and store the supplied deck in it."""
 
-class DeckStorage:
-    """Utility object to save and load serialized JSON objects stored in a file."""
+        if os.path.isfile(self.filepath) or os.path.exists(self.filepath):
+            raise IOError("A file already exists, cannot create deck.")
 
-    def __init__(self, filepath):
-        self.filepath = filepath
+        # Create the file
+        open(self.filepath, "a").close()
 
-    def load(self) -> decks.Deck:
-        """Load and serialize the data in this file."""
-        check_valid_file(self.filepath)
-
-        with open(self.filepath, "r") as file:
-            content = file.read()
-
-        content = json.loads(content)
-        return decks.create_from_dict(content)
-
-    def save(self, deck: decks.Deck):
+    def save(self):
         """Serialize and save the content in this file."""
-        check_valid_file(self.filepath)
 
-        content = deck.to_dict()
+        content = self.to_dict()
         content = json.dumps(content, sort_keys=False, indent=4, separators=(",", ": "))
 
         with open(self.filepath, "w") as file:
             file.write(content)
+
+
+def load_deck(filepath: Path) -> Deck:
+    """
+    Construct a Deck Object from a dictionary object.
+    Load and serialize the data in this file."""
+    with open(filepath, "r") as file:
+        content = file.read()
+
+    content = json.loads(content)
+
+    if "name" not in content:
+        raise KeyError("Invalid data string. 'name' key is missing")
+    if "description" not in content:
+        raise KeyError("Invalid data string. 'description' key is missing")
+    if "cards" not in content:
+        raise KeyError("Invalid data string. 'cards' key is missing")
+    if not isinstance(content["cards"], list):
+        raise ValueError("Invalid data type. 'cards' value should be a list")
+
+    deck = Deck(content["name"], content["description"])
+
+    for card in [cards.create_from_dict(card) for card in content["cards"]]:
+        deck.add(card)
+
+    return deck
 
 
 def storage_path() -> Path:
@@ -139,12 +127,6 @@ def create_storage_directory():
     path = storage_path()
     if not os.path.exists(path):
         os.mkdir(path)
-
-
-def check_valid_file(filepath: Path):
-    """Raise an exception if the file at the given path is not a file or does not exist."""
-    if not os.path.isfile(filepath):
-        raise IOError(f"Path: {filepath} is not a file.")
 
 
 def generate_filename_from_str(string: str) -> str:
@@ -181,24 +163,3 @@ def link_selected_deck(filepath: Path):
         if e.errno == errno.EEXIST:
             os.remove(linkpath)
             os.symlink(filepath, linkpath)
-
-
-def create_deck_file(deck: decks.Deck) -> Path:
-    """Create a file and store the supplied deck in it."""
-    filepath = generate_deck_filepath(deck.name)
-
-    if os.path.isfile(filepath) or os.path.exists(filepath):
-        raise IOError("A file already exists, cannot create deck.")
-
-    # Create the file
-    open(filepath, "a").close()
-
-    store_deck(deck)
-    return filepath
-
-
-def store_deck(deck: decks.Deck):
-    """Store the supplied deck in the storage folder."""
-    filepath = generate_deck_filepath(deck.name)
-    storage_item = DeckStorage(filepath)
-    storage_item.save(deck)

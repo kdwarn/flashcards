@@ -11,22 +11,8 @@ deck = decks.Deck("French", "Studying French")
 math_deck = decks.Deck("Math", "A study set about maths")
 
 
-def test_create_from_dict():
-    card = StudyCard("2+2=?", "4")
-
-    data = {"name": "Math", "description": "Math-145"}
-    data["cards"] = [card.to_dict()]
-
-    study_set = decks.create_from_dict(data)
-
-    assert study_set.name == "Math"
-    assert study_set.description == "Math-145"
-    assert study_set.cards[0].question == "2+2=?"
-    assert study_set.cards[0].answer == "4"
-
-
 def test_StudySet_exists():
-    assert decks.Deck("Math 145") is not None
+    assert decks.Deck("Math") is not None
 
 
 def test_get_name():
@@ -116,16 +102,6 @@ def test_temp_create_storage_directory(create_storage_directory, storage_path):
     assert storage_path.exists()
 
 
-def test_check_file_exists():
-    # TODO: use this to see if check_valid_file() is even necessary - I think an exception should
-    # even without it if filepath does not exist
-    filepath = Path("testing/kris.json")
-    deck = decks.DeckStorage(filepath)
-    print(deck.filepath)
-    assert isinstance(deck, decks.DeckStorage)
-    assert 0
-
-
 @pytest.mark.parametrize(
     "input, expected",
     [
@@ -140,8 +116,5 @@ def test_generate_filename_from_str_alphanum(input, expected):
 
 
 def test_loading_non_existant_deck_raises_error():
-
-    no_deck = decks.DeckStorage("/home/usr/.flashcards/set01.json")
-
-    with pytest.raises(IOError):
-        no_deck.load()
+    with pytest.raises(FileNotFoundError):
+        decks.load_deck(Path("/home/usr/.flashcards/set01.json"))

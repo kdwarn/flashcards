@@ -31,7 +31,7 @@ def status_cmd():
     """Show selected deck, if any, and details about it."""
 
     try:
-        deck = decks.DeckStorage(decks.selected_deck_path()).load()
+        deck = decks.load_deck(decks.selected_deck_path())
     except IOError:
         return click.echo("No deck currently selected.")
 
@@ -55,14 +55,14 @@ def study_cmd(deck, ordered):
     """
     if not deck:
         try:
-            deck = decks.DeckStorage(decks.selected_deck_path()).load().name
+            deck = decks.load_deck(decks.selected_deck_path()).name
         except IOError:
             return click.echo("No deck currently selected.")
 
     deck_path = decks.generate_deck_filepath(deck)
 
     try:
-        deck = decks.DeckStorage(deck_path).load()
+        deck = decks.load_deck(deck_path)
     except IOError:
         return click.echo("No deck by that name found.")
 
@@ -83,10 +83,11 @@ def create(name, desc):
     If this deck does not exist, it is created.
     """
     deck = decks.Deck(name, desc)
-    filepath = decks.create_deck_file(deck)
+    deck.create_file()
+    deck.save()
 
     # automatically select this deck
-    decks.link_selected_deck(filepath)
+    decks.link_selected_deck(deck.filepath)
     click.echo("Deck created!")
 
 
@@ -100,11 +101,11 @@ def select(deck):
     """
     deck_path = decks.generate_deck_filepath(deck)
     try:
-        decks.check_valid_file(deck_path)
-    except IOError:
+        deck_obj = decks.load_deck(deck_path)
+    except FileNotFoundError:
         return click.echo("No deck by that name found.")
+
     decks.link_selected_deck(deck_path)  # create sym link to deck from .SELECTEDLINK
-    deck_obj = decks.DeckStorage(deck_path).load()
     click.echo(f"Selected deck: {deck_obj.name}")
     click.echo("New cards will be added to this deck.")
 
@@ -114,17 +115,14 @@ def select(deck):
 def add(editormode):
     """ Add a card to the currently selected deck. """
     try:
-        deck = decks.DeckStorage(decks.selected_deck_path()).load()
+        deck = decks.load_deck(decks.selected_deck_path())
     except IOError:
         return click.echo("There is no deck currently selected. Select a deck to add a card.")
 
     question = ask_for_question(editormode)
     answer = ask_for_answer(editormode)
-    # Create the card and add it to the deck
-    # Update the deck by overwriting the old information.
     deck.add(StudyCard(question, answer))
-    decks.store_deck(deck)
-
+    deck.save()
     click.echo("Card added to the deck!")
 
 
