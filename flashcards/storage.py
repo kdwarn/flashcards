@@ -2,6 +2,7 @@
 import errno
 import json
 import os
+from pathlib import Path
 
 from flashcards import decks
 
@@ -18,7 +19,7 @@ class DeckStorage:
 
     def load(self):
         """Load and serialize the data in this file."""
-        assert_valid_file(self.filepath)
+        check_valid_file(self.filepath)
 
         with open(self.filepath, "r") as file:
             content = file.read()
@@ -28,7 +29,7 @@ class DeckStorage:
 
     def save(self, deck):
         """Serialize and save the content in this file."""
-        assert_valid_file(self.filepath)
+        check_valid_file(self.filepath)
 
         content = deck.to_dict()
         content = json.dumps(content, sort_keys=False, indent=4, separators=(",", ": "))
@@ -37,9 +38,9 @@ class DeckStorage:
             file.write(content)
 
 
-def storage_path():
+def storage_path() -> Path:
     """Get the absolute storage path on the machine."""
-    return os.path.join(os.path.expanduser("~"), STORAGE_DIR_NAME)
+    return Path.home() / STORAGE_DIR_NAME
 
 
 def create_storage_directory():
@@ -49,7 +50,7 @@ def create_storage_directory():
         os.mkdir(path)
 
 
-def assert_valid_file(filepath):
+def check_valid_file(filepath):
     """Raise an exception if the file at the given path is not a file or does not exists."""
     if not os.path.isfile(filepath):
         raise IOError("path: %s is not a file" % filepath)
@@ -57,7 +58,7 @@ def assert_valid_file(filepath):
         raise IOError("path: %s does not exists" % filepath)
 
 
-def generate_filename_from_str(string):
+def generate_filename_from_str(string: str) -> str:
     """Generate a valid filename from a given string."""
     keepchars = [" ", "-", "_"]  # characters to keep in the filename
     swapchars = {" ": "_", "-": "_"}  # keys are swapped by their values
@@ -69,16 +70,16 @@ def generate_filename_from_str(string):
     return "".join(_).rstrip()
 
 
-def generate_deck_filepath(deck_name):
+def generate_deck_filepath(deck_name: str) -> Path:
     """Generate the absolute filepath in which the given deck should be stored."""
     filename = generate_filename_from_str(deck_name)
     filename = filename + DECK_EXTENSION
-    return os.path.join(storage_path(), filename)
+    return storage_path() / filename
 
 
-def selected_deck_path():
+def selected_deck_path() -> Path:
     """Get the absolute path for the currently selected deck on the machine."""
-    return os.path.join(storage_path(), SELECTED_DECK_NAME)
+    return storage_path() / SELECTED_DECK_NAME
 
 
 def link_selected_deck(filepath):
@@ -93,9 +94,9 @@ def link_selected_deck(filepath):
             os.symlink(filepath, linkpath)
 
 
-def create_deck_file(deck):
+def create_deck_file(deck: decks.Deck) -> Path:
     """Create a file and store the supplied deck in it."""
-    filepath = generate_deck_filepath(deck)
+    filepath = generate_deck_filepath(deck.name)
 
     if os.path.isfile(filepath) or os.path.exists(filepath):
         raise IOError("A file already exists, cannot create deck.")
@@ -107,16 +108,16 @@ def create_deck_file(deck):
     return filepath
 
 
-def store_deck(deck):
+def store_deck(deck: decks.Deck):
     """Store the supplied deck in the storage folder."""
-    filepath = generate_deck_filepath(deck)
+    filepath = generate_deck_filepath(deck.name)
     storage_item = DeckStorage(filepath)
     storage_item.save(deck)
 
 
 def load_deck(filepath):
     """Attempt to load the deck from a storage item."""
-    assert_valid_file(filepath)
+    check_valid_file(filepath)
     return DeckStorage(filepath)
 
 

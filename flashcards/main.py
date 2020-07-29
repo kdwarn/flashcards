@@ -101,7 +101,7 @@ def select(deck):
     """
     deck_path = storage.generate_deck_filepath(deck)
     try:
-        storage.assert_valid_file(deck_path)
+        storage.check_valid_file(deck_path)
     except IOError:
         return click.echo("No deck by that name found.")
     storage.link_selected_deck(deck_path)  # create sym link to deck from .SELECTEDLINK
