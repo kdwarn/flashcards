@@ -1,8 +1,11 @@
 """Contain the logic to load and save items in the Flashcards storage directory."""
 import errno
+from typing import Dict
 import json
 import os
 from pathlib import Path
+
+import click
 
 from flashcards import decks
 
@@ -17,7 +20,7 @@ class DeckStorage:
     def __init__(self, filepath):
         self.filepath = filepath
 
-    def load(self):
+    def load(self) -> decks.Deck:
         """Load and serialize the data in this file."""
         check_valid_file(self.filepath)
 
@@ -27,7 +30,7 @@ class DeckStorage:
         content = json.loads(content)
         return decks.create_from_dict(content)
 
-    def save(self, deck):
+    def save(self, deck: decks.Deck):
         """Serialize and save the content in this file."""
         check_valid_file(self.filepath)
 
@@ -50,12 +53,10 @@ def create_storage_directory():
         os.mkdir(path)
 
 
-def check_valid_file(filepath):
-    """Raise an exception if the file at the given path is not a file or does not exists."""
+def check_valid_file(filepath: Path):
+    """Raise an exception if the file at the given path is not a file or does not exist."""
     if not os.path.isfile(filepath):
-        raise IOError("path: %s is not a file" % filepath)
-    if not os.path.exists(filepath):
-        raise IOError("path: %s does not exists" % filepath)
+        raise IOError(f"Path: {filepath} is not a file.")
 
 
 def generate_filename_from_str(string: str) -> str:
@@ -82,7 +83,7 @@ def selected_deck_path() -> Path:
     return storage_path() / SELECTED_DECK_NAME
 
 
-def link_selected_deck(filepath):
+def link_selected_deck(filepath: Path):
     """Create a symbolic link to the selected deck."""
     linkpath = selected_deck_path()
 
@@ -113,15 +114,3 @@ def store_deck(deck: decks.Deck):
     filepath = generate_deck_filepath(deck.name)
     storage_item = DeckStorage(filepath)
     storage_item.save(deck)
-
-
-def load_deck(filepath):
-    """Attempt to load the deck from a storage item."""
-    check_valid_file(filepath)
-    return DeckStorage(filepath)
-
-
-def load_selected_deck():
-    """Load and return the currently selected deck."""
-    item = DeckStorage(selected_deck_path())
-    return item.load()

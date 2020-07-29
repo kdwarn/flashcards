@@ -32,7 +32,7 @@ def status_cmd():
     """Show selected deck, if any, and details about it."""
 
     try:
-        deck = storage.load_selected_deck()
+        deck = storage.DeckStorage(storage.selected_deck_path()).load()
     except IOError:
         return click.echo("No deck currently selected.")
 
@@ -56,14 +56,14 @@ def study_cmd(deck, ordered):
     """
     if not deck:
         try:
-            deck = storage.load_selected_deck().name
+            deck = storage.DeckStorage(storage.selected_deck_path()).load().name
         except IOError:
             return click.echo("No deck currently selected.")
 
     deck_path = storage.generate_deck_filepath(deck)
 
     try:
-        deck = storage.load_deck(deck_path).load()
+        deck = storage.DeckStorage(deck_path).load()
     except IOError:
         return click.echo("No deck by that name found.")
 
@@ -105,8 +105,8 @@ def select(deck):
     except IOError:
         return click.echo("No deck by that name found.")
     storage.link_selected_deck(deck_path)  # create sym link to deck from .SELECTEDLINK
-    deck_obj = storage.load_deck(deck_path).load()
-    click.echo("Selected deck: %s" % deck_obj.name)
+    deck_obj = storage.DeckStorage(deck_path).load()
+    click.echo(f"Selected deck: {deck_obj.name}")
     click.echo("New cards will be added to this deck.")
 
 
@@ -115,7 +115,7 @@ def select(deck):
 def add(editormode):
     """ Add a card to the currently selected deck. """
     try:
-        deck = storage.load_selected_deck()
+        deck = storage.DeckStorage(storage.selected_deck_path()).load()
     except IOError:
         return click.echo("There is no deck currently selected. Select a deck to add a card.")
 

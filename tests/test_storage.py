@@ -45,6 +45,16 @@ def test_temp_create_storage_directory(create_storage_directory, storage_path):
     assert storage_path.exists()
 
 
+def test_check_file_exists():
+    # TODO: use this to see if check_valid_file() is even necessary - I think an exception should
+    # even without it if filepath does not exist
+    filepath = Path("testing/kris.json")
+    deck = storage.load_deck(filepath)
+    print(deck.filepath)
+    assert isinstance(deck, storage.DeckStorage)
+    assert 0
+
+
 @pytest.mark.parametrize(
     "input, expected",
     [
