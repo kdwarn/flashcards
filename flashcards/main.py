@@ -1,10 +1,4 @@
-"""
-flashcards.main
-~~~~~~~~~~~~~~~~~~~
-
-Main entry point of the application.
-Contain commands and sub-commands grouping logic.
-"""
+"""Main entry point of the application, with commands and sub-commands."""
 import os
 from subprocess import call
 import tempfile
@@ -18,18 +12,13 @@ from flashcards.cards import StudyCard
 
 @click.group()
 def cli():
-    """
-    Command line application that focus on creating decks of flashcards
-    quickly and easily.
-    """
-    # Create the storage directory if it doesn't already exist
-    decks.create_storage_directory()
+    """Create and study flashcards on the command line."""
+    decks.create_storage_directory()  # create it if it doesn't already exist
 
 
 @click.command("status")
 def status_cmd():
     """Show selected deck, if any, and details about it."""
-
     try:
         deck = decks.load_deck(decks.selected_deck_path())
     except IOError:
@@ -67,7 +56,7 @@ def study_cmd(deck, ordered):
         return click.echo("No deck by that name found.")
 
     if deck.cards:
-        study.study(deck.cards, ordered=ordered)
+        study.study(deck, ordered=ordered)
     else:
         click.echo(f"The {deck.name} deck currently has no cards.")
 
@@ -76,45 +65,39 @@ def study_cmd(deck, ordered):
 @click.option("--name", prompt="Name of the deck")
 @click.option("--desc", prompt="Description of the deck")
 def create(name, desc):
-    """
-    Create a new deck.
-
-    User supplies a name and a description.
-    If this deck does not exist, it is created.
-    """
+    """Create a new deck."""
     deck = decks.Deck(name, desc)
     try:
         deck.create_file()
     except IOError:
         return click.echo("A deck with that name already exists; aborting.")
     deck.save()
-
-    # automatically select this deck
-    decks.link_selected_deck(deck.filepath)
+    decks.link_selected_deck(deck.filepath)  # make this the selected deck
     click.echo("Deck created!")
 
 
 @click.command("select")
 @click.argument("deck")
 def select(deck):
-    """
-    Select a deck.
-
-    New cards will be added to this deck, and a study session will open this deck.
-    """
+    """Select a deck to add cards to and to study."""
     deck_path = decks.generate_deck_filepath(deck)
     try:
         deck_obj = decks.load_deck(deck_path)
     except FileNotFoundError:
         return click.echo("No deck by that name found.")
 
-    decks.link_selected_deck(deck_path)  # create sym link to deck from .SELECTEDLINK
+    decks.link_selected_deck(deck_path)  # make this the selected deck
     click.echo(f"Selected deck: {deck_obj.name}")
     click.echo("New cards will be added to this deck.")
 
 
 @click.command("add")
-@click.option("-e", "editormode", flag_value=True, default=False)
+@click.option(
+    "-e",
+    "editormode",
+    is_flag=True,
+    help="Use an editor rather than the command line to create the card.",
+)
 def add(editormode):
     """ Add a card to the currently selected deck. """
     try:

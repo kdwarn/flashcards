@@ -3,15 +3,17 @@ import random
 
 import click
 
+from flashcards.decks import Deck
 
-def study(cards, ordered=False):
-    """Iterate through cards, pausing for user input after each question/answer."""
-    question_num = len(cards)
+
+def study(deck: Deck, ordered=False):
+    """Iterate through Deck's cards, pausing for user input after each question/answer."""
+    question_num = len(deck)
 
     if not ordered:
-        random.shuffle(cards)
+        random.shuffle(deck.cards)
 
-    for i, card in enumerate(cards, start=1):
+    for i, card in enumerate(deck, start=1):
         click.clear()
         click.echo(f"QUESTION {i} / {question_num}")
         click.echo("\n" + card.question + "\n")

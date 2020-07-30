@@ -1,15 +1,9 @@
-"""
-flashcards.decks
-~~~~~~~~~~~~~~~~~~~
-
-Contain the Deck object and logic related to it.
-"""
+"""Load and save decks; add cards to decks."""
 from collections import OrderedDict
 import errno
 import json
 import os
 from pathlib import Path
-from typing import Dict
 
 import click
 
@@ -26,16 +20,14 @@ class Deck:
     """A Deck is a container of flash cards."""
 
     def __init__(self, name, description=None):
-        """
-        Creates a Deck.
-
-        :param name: The name of the deck.
-        :param description: The description for this deck.
-        """
+        """Creates a Deck."""
         self.name = name
         self.description = "" if description is None else description
         self.cards = []
         self.filepath = generate_deck_filepath(name)
+
+    def __str__(self):
+        return self.name
 
     def __iter__(self):
         """Iter through the cards of this deck."""
@@ -57,11 +49,7 @@ class Deck:
             raise TypeError("A Deck can only contain instances of StudyCard objects.")
 
     def to_dict(self):
-        """
-        Get a dictionary object representing this Deck.
-
-        :returns: a dictionary object representation of this Deck.
-        """
+        """Get a dictionary object representing this Deck."""
         serialized_cards = [c.to_dict() for c in self]
 
         data = (
@@ -73,41 +61,33 @@ class Deck:
         return OrderedDict(data)
 
     def create_file(self):
-        """Create a file and store the supplied deck in it."""
+        """Create a file for the deck."""
 
         if os.path.isfile(self.filepath) or os.path.exists(self.filepath):
-            raise IOError("A file already exists, cannot create deck.")
+            raise IOError()
 
-        # Create the file
-        open(self.filepath, "a").close()
+        open(self.filepath, "w+").close()
 
     def save(self):
-        """Serialize and save the content in this file."""
-
-        content = self.to_dict()
-        content = json.dumps(content, sort_keys=False, indent=4, separators=(",", ": "))
+        """Serialize and save the deck to its file."""
 
         with open(self.filepath, "w") as file:
-            file.write(content)
+            json.dump(self.to_dict(), file)
 
 
 def load_deck(filepath: Path) -> Deck:
-    """
-    Construct a Deck Object from a dictionary object.
-    Load and serialize the data in this file."""
+    """Load a json file and create a Deck from it."""
     with open(filepath, "r") as file:
-        content = file.read()
-
-    content = json.loads(content)
+        content = json.load(file)
 
     if "name" not in content:
-        raise KeyError("Invalid data string. 'name' key is missing")
+        raise KeyError("The deck file is corrupted - deck 'name' key is missing.")
     if "description" not in content:
-        raise KeyError("Invalid data string. 'description' key is missing")
+        raise KeyError("The deck file is corrupted - deck 'description' key is missing.")
     if "cards" not in content:
-        raise KeyError("Invalid data string. 'cards' key is missing")
+        raise KeyError("The deck file is corrupted - deck 'cards' key is missing.")
     if not isinstance(content["cards"], list):
-        raise ValueError("Invalid data type. 'cards' value should be a list")
+        raise ValueError("The deck file is corrupted - 'cards' value should be a list.")
 
     deck = Deck(content["name"], content["description"])
 
@@ -129,7 +109,7 @@ def create_storage_directory():
         os.mkdir(path)
 
 
-def generate_filename_from_str(string: str) -> str:
+def generate_filename(string: str) -> str:
     """Generate a valid filename from a given string."""
     keepchars = [" ", "-", "_"]  # characters to keep in the filename
     swapchars = {" ": "_", "-": "_"}  # keys are swapped by their values
@@ -143,7 +123,7 @@ def generate_filename_from_str(string: str) -> str:
 
 def generate_deck_filepath(deck_name: str) -> Path:
     """Generate the absolute filepath in which the given deck should be stored."""
-    filename = generate_filename_from_str(deck_name)
+    filename = generate_filename(deck_name)
     filename = filename + DECK_EXTENSION
     return storage_path() / filename
 
@@ -154,7 +134,7 @@ def selected_deck_path() -> Path:
 
 
 def link_selected_deck(filepath: Path):
-    """Create a symbolic link to the selected deck."""
+    """Create a symbolic link to the selected Deck's filepath."""
     linkpath = selected_deck_path()
 
     try:

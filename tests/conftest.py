@@ -33,19 +33,21 @@ def create_storage_directory(storage_path, monkeypatch):
 
 
 @pytest.fixture
-def math_deck():
+def math_deck(create_storage_directory):
     deck = decks.Deck("Basic Math")
-    deck.description = "For learning basic artithmetic."
+    deck.description = "For learning basic arithmetic."
     deck.cards = [
         StudyCard("2 + 2 = ?", "4"),
         StudyCard("2 + 3 = ?", "5"),
         StudyCard("2 + 4 = ?", "6"),
         StudyCard("2 + 5 = ?", "7"),
     ]
-    print(decks.STORAGE_DIR_NAME)
+
+    deck.create_file()
+    deck.save()
     return deck
 
 
 @pytest.fixture
-def math_deck_file(math_deck):
-    pass
+def math_deck_filepath(math_deck):
+    return math_deck.filepath

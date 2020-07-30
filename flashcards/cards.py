@@ -1,15 +1,6 @@
-"""Contain the StudyCard object and logic related to it."""
+"""StudyCard class and creating a StudyCard from a dictionary."""
 from collections import OrderedDict
-
-
-def create_from_dict(data):
-    """Construct a StudyCard from a dictionary."""
-    if "question" not in data:
-        raise KeyError("Invalid data string. 'question' key is missing")
-    if "answer" not in data:
-        raise KeyError("Invalid data string. 'answer' key is missing")
-
-    return StudyCard(data["question"], data["answer"])
+from typing import Dict
 
 
 class StudyCard:
@@ -21,3 +12,13 @@ class StudyCard:
 
     def to_dict(self):
         return OrderedDict((("question", self.question), ("answer", self.answer)))
+
+
+def create_from_dict(data: Dict) -> StudyCard:
+    """Construct a StudyCard from a dictionary."""
+    if "question" not in data:
+        raise KeyError("Invalid data string. 'question' key is missing")
+    if "answer" not in data:
+        raise KeyError("Invalid data string. 'answer' key is missing")
+
+    return StudyCard(data["question"], data["answer"])
