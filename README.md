@@ -22,17 +22,14 @@ Add as many cards as you like.
 
 ## The Selected Deck and Deck Status
 
-By default, after creating a deck, the application automaticaly selects it.  This means that the application is currently focused on this deck. Every new created card will be stored in this deck. Also, the `flashcards status` command will show information on the currently selected deck:
+By default, after creating a deck, the application automatically selects it. New cards you create will be added to this deck (until you select a different one). Also, the `flashcards status` command will show information on the currently selected deck:
 
 ```
 $ flashcards status
 
-Currently using deck: Math
-
-[NUMBER OF CARDS]: 1
-
-[DESCRIPTION]:
-Some math questions
+Currently selected deck: Math
+Number of cards: 1
+Description: Some math questions
 ```
 
 To select a different deck:
@@ -40,8 +37,8 @@ To select a different deck:
 ```
 $ flashcards select French
 
-selected deck: French
-any created card will be automatically added to this deck.
+Selected deck: French
+New cards will be added to this deck.
 ```
 
 ## Studying a Deck
@@ -50,7 +47,7 @@ You can study the currently selected deck with `flashcards study` or you can spe
 
 The app will iterate through the cards, pausing between the question and answer. You can quit the session by pressing the "q" key.
 
-By default, the cards will be displayed in the order they were added to the deck. To display them in a random order, pass the `--shuffled` flag: `flashcards study German --shuffled`.
+By default, the cards will be shuffled before you start studying. To display them in the order they were created in, pass the `--ordered` flag: `flashcards study German --ordered`.
 
 ## Bash Autocomplete
 
@@ -62,5 +59,5 @@ For __OSX__, you might have to copy or reference the [flashcards-complete.sh](fl
 
 ## Storage directory
 
-By default, decks are stored at `~/.flashcards/decks`, in json format.
+By default, decks are stored at `~/.flashcards`, in json format.
 
