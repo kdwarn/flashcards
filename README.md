@@ -1,6 +1,6 @@
 # flashcards
 
-Application for creating and studying flashcards from the command line. Fork of [zergov/flashcards](https://github.com/zergov/flashcards).
+Application for creating and studying flashcards on the command line. Forked from [zergov/flashcards](https://github.com/zergov/flashcards).
 
 ## Installation
 
