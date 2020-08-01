@@ -7,7 +7,6 @@ import click
 
 from flashcards import study
 from flashcards import decks
-from flashcards.cards import StudyCard
 
 
 @click.group()
@@ -110,7 +109,7 @@ def add(editormode):
 
     question = ask_for_question(editormode)
     answer = ask_for_answer(editormode)
-    deck.add(StudyCard(question, answer))
+    deck.cards.append({"question": question, "answer": answer})
     deck.save()
     click.echo("Card added to the deck!")
 

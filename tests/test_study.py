@@ -1,7 +1,6 @@
 from click.testing import CliRunner
 import pytest
 
-from flashcards.cards import StudyCard
 from flashcards.decks import Deck
 from flashcards import main
 from flashcards.study import study

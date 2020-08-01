@@ -16,9 +16,9 @@ def study(deck: Deck, ordered=False):
     for i, card in enumerate(deck.cards, start=1):
         click.clear()
         click.echo(f"QUESTION {i} / {question_num}")
-        click.echo("\n" + card.question + "\n")
+        click.echo("\n" + card["question"] + "\n")
         click.pause("...")
-        click.echo("\n" + card.answer + "\n")
+        click.echo("\n" + card["answer"] + "\n")
         click.echo("Press any key to show the next question, and 'q' to quit.")
         key_press = click.getchar()
         if key_press == "q":

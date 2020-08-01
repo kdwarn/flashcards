@@ -1,5 +1,4 @@
 """Load and save decks; add cards to decks."""
-from collections import OrderedDict
 import errno
 import json
 import os
@@ -7,7 +6,6 @@ from pathlib import Path
 
 import click
 
-from flashcards import cards
 from flashcards import decks
 
 
@@ -17,7 +15,7 @@ SELECTED_DECK_NAME = ".SELECTEDDECK"
 
 
 class Deck:
-    """A Deck is a container of flash cards."""
+    """A Deck is a container of flashcards."""
 
     def __init__(self, name, description=None):
         """Creates a Deck."""
@@ -29,28 +27,14 @@ class Deck:
     def __str__(self):
         return self.name
 
-    def add(self, card):
-        """
-        Add a card to the end of this deck.
-
-        :param card: A subclass of flashcards.cards.StudyCard object.
-        """
-        if isinstance(card, cards.StudyCard):
-            self.cards.append(card)
-        else:
-            raise TypeError("A Deck can only contain instances of StudyCard objects.")
-
     def to_dict(self):
         """Get a dictionary object representing this Deck."""
-        serialized_cards = [c.to_dict() for c in self.cards]
 
-        data = (
-            ("name", self.name),
-            ("description", self.description),
-            ("cards", serialized_cards),
-        )
-
-        return OrderedDict(data)
+        return {
+            "name": self.name,
+            "description": self.description,
+            "cards": self.cards,
+        }
 
     def create_file(self):
         """Create a file for the deck."""
@@ -82,10 +66,7 @@ def load_deck(filepath: Path) -> Deck:
         raise ValueError("The deck file is corrupted - 'cards' value should be a list.")
 
     deck = Deck(content["name"], content["description"])
-
-    for card in [cards.create_from_dict(card) for card in content["cards"]]:
-        deck.add(card)
-
+    deck.cards = content["cards"]
     return deck
 
 

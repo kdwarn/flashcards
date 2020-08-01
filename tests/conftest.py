@@ -3,7 +3,6 @@ from pathlib import Path
 
 import pytest
 
-from flashcards.cards import StudyCard
 from flashcards import decks
 
 
@@ -37,10 +36,10 @@ def math_deck(create_storage_directory):
     deck = decks.Deck("Basic Math")
     deck.description = "For learning basic arithmetic."
     deck.cards = [
-        StudyCard("2 + 2 = ?", "4"),
-        StudyCard("2 + 3 = ?", "5"),
-        StudyCard("2 + 4 = ?", "6"),
-        StudyCard("2 + 5 = ?", "7"),
+        {"question": "2 + 2 = ?", "answer": "4"},
+        {"question": "2 + 3 = ?", "answer": "5"},
+        {"question": "2 + 4 = ?", "answer": "6"},
+        {"question": "2 + 5 = ?", "answer": "7"},
     ]
 
     deck.create_file()

@@ -4,7 +4,6 @@ from pathlib import Path
 import pytest
 
 from flashcards import decks
-from flashcards.cards import StudyCard
 
 
 def test_get_name(math_deck):
@@ -21,32 +20,23 @@ def test_create_redundant_file_raises_error(math_deck):
 
 
 def test_len_deck(math_deck):
-    assert len(math_deck) == 4
-
-
-def test_set_add_wrong_card_type_raises_error(math_deck):
-    card = "A string is not a card!"
-    with pytest.raises(TypeError):
-        math_deck.add(card)
+    assert len(math_deck.cards) == 4
 
 
 def test_add_card_success(math_deck):
-    card0 = StudyCard("5x5", "25")
-    math_deck.add(card0)
-    assert len(math_deck) == 5
+    math_deck.cards.append({"question": "5x5", "answer": "25"})
+    assert len(math_deck.cards) == 5
 
 
 def test_to_dict():
     deck = decks.Deck("misc", "A misc deck")
-    card = StudyCard("What is my name?", "Jonathan")
-    deck.add(card)
+    card = {"question": "What is my name?", "answer": "Kris"}
+    deck.cards.append(card)
 
     data = deck.to_dict()
     expected = {"name": "misc", "description": "A misc deck"}
 
-    # List of serialized cards in this set
-    cards = [c.to_dict() for c in deck]
-    expected["cards"] = cards
+    expected["cards"] = [card]
     assert expected == data
 
 

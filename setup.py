@@ -10,6 +10,7 @@ setup(
     url="https://github.com/kdwarn/flashcards",
     packages=find_packages(),
     license="MIT",
+    python_requires=">=3.7",
     install_requires=["click==7.1"],
     entry_points="""
         [console_scripts]
