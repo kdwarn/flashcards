@@ -54,6 +54,10 @@ def test_storage_path():
     assert decks.storage_path() == Path(f"/home/{getpass.getuser()}/.flashcards")
 
 
+def test_create_storage_path_raises_error_if_exists():
+    pass
+
+
 def test_generate_deck_filepath():
     path = decks.generate_deck_filepath("French")
     assert path == Path(f"/home/{getpass.getuser()}/.flashcards/French.json")
@@ -82,9 +86,9 @@ def test_temp_create_storage_directory(create_storage_directory, storage_path):
 @pytest.mark.parametrize(
     "input, expected",
     [
-        ("!f@i#l$e%-^n&a*m(e)0", "file_name0"),
-        ("file-name", "file_name"),
-        ("file name", "file_name"),
+        ("!f@i#l$e%-^n&a*m(e)0", "file_name0.json"),
+        ("file-name", "file_name.json"),
+        ("file name", "file_name.json"),
     ],
 )
 def test_generate_filename_alphanum(input, expected):

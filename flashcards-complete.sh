@@ -7,14 +7,14 @@ _flashcards_completion() {
     case "${prev}" in
         select)
 
-            local names=$(for x in `ls ~/.flashcards/studysets/* | xargs -n 1 basename `; do echo ${x} ; done )
+            local names=$(for x in `ls ~/.flashcards/* | xargs -n 1 basename `; do echo ${x} ; done )
             COMPREPLY=( $(compgen -W "${names}" -- ${cur}) )
             return 0
             ;;
 
         study)
 
-            local names=$(for x in `ls ~/.flashcards/studysets/* | xargs -n 1 basename `; do echo ${x} ; done )
+            local names=$(for x in `ls ~/.flashcards/* | xargs -n 1 basename `; do echo ${x} ; done )
             COMPREPLY=( $(compgen -W "${names}" -- ${cur}) )
             return 0
             ;;

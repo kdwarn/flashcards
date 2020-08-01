@@ -63,7 +63,7 @@ class Deck:
     def create_file(self):
         """Create a file for the deck."""
 
-        if os.path.isfile(self.filepath) or os.path.exists(self.filepath):
+        if self.filepath.exists():
             raise IOError()
 
         open(self.filepath, "w+").close()
@@ -105,26 +105,25 @@ def storage_path() -> Path:
 def create_storage_directory():
     """Create storage directory if it doesn't exist."""
     path = storage_path()
-    if not os.path.exists(path):
-        os.mkdir(path)
+    if not path.exists():
+        path.mkdir()
 
 
 def generate_filename(string: str) -> str:
     """Generate a valid filename from a given string."""
-    keepchars = [" ", "-", "_"]  # characters to keep in the filename
     swapchars = {" ": "_", "-": "_"}  # keys are swapped by their values
 
     for key, value in swapchars.items():
         string = string.replace(key, value)
 
-    _ = [c for c in string if c.isalnum() or c == " " or c in keepchars]
-    return "".join(_).rstrip()
+    _ = [c for c in string if c.isalnum() or c == "_"]
+    filename = "".join(_)
+    return filename + DECK_EXTENSION
 
 
 def generate_deck_filepath(deck_name: str) -> Path:
     """Generate the absolute filepath in which the given deck should be stored."""
     filename = generate_filename(deck_name)
-    filename = filename + DECK_EXTENSION
     return storage_path() / filename
 
 

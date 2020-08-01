@@ -16,7 +16,7 @@ def cli():
     decks.create_storage_directory()  # create it if it doesn't already exist
 
 
-@click.command("status")
+@cli.command("status")
 def status_cmd():
     """Show selected deck, if any, and details about it."""
     try:
@@ -31,7 +31,7 @@ def status_cmd():
     click.echo("")
 
 
-@click.command("study")
+@cli.command("study")
 @click.argument("deck", default="")
 @click.option(
     "--ordered", is_flag=True, help="Study the cards in the order they were added to the deck."
@@ -61,7 +61,7 @@ def study_cmd(deck, ordered):
         click.echo(f"The {deck.name} deck currently has no cards.")
 
 
-@click.command("create")
+@cli.command("create")
 @click.option("--name", prompt="Name of the deck")
 @click.option("--desc", prompt="Description of the deck")
 def create(name, desc):
@@ -76,7 +76,7 @@ def create(name, desc):
     click.echo("Deck created!")
 
 
-@click.command("select")
+@cli.command("select")
 @click.argument("deck")
 def select(deck):
     """Select a deck to add cards to and to study."""
@@ -91,7 +91,7 @@ def select(deck):
     click.echo("New cards will be added to this deck.")
 
 
-@click.command("add")
+@cli.command("add")
 @click.option(
     "-e",
     "editormode",
@@ -150,11 +150,3 @@ def prompt_via_editor(filename, message):
             data += line + "\n"
 
     return data.rstrip("\n")
-
-
-# Add the subcommands to this main entry point.
-cli.add_command(status_cmd)
-cli.add_command(study_cmd)
-cli.add_command(create)
-cli.add_command(select)
-cli.add_command(add)
