@@ -1,20 +1,16 @@
-from setuptools import setup
-from setuptools import find_packages
+from setuptools import setup, find_packages
 
-DESCRIPTION = "CLI application that focus on quickly creating study flash cards"
-
-REQUIREMENTS = ["click==7.1"]
 
 setup(
-    name="pyflashcards",
-    author="Jonathan Lalande",
-    author_email="jonathan.lalande.1@ens.etsmtl.ca",
-    version="1.0.2",
-    license="MIT",
-    description=DESCRIPTION,
+    name="flashcards",
+    version="1.1",
+    description="Command-line interface for creating and studying flashcards",
+    author="Jonathan Lalande, Kris Warner",
+    author_email="kdwarn@protonmail.com",
+    url="https://github.com/kdwarn/flashcards",
     packages=find_packages(),
-    install_requires=REQUIREMENTS,
-    data_files=[("/etc/bash_completion.d/", ["flashcards-complete.sh"])],
+    license="MIT",
+    install_requires=["click==7.1"],
     entry_points="""
         [console_scripts]
         flashcards=flashcards.main:cli

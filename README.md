@@ -49,14 +49,6 @@ The app will iterate through the cards, pausing between the question and answer.
 
 By default, the cards will be shuffled before you start studying. To display them in the order they were created in, pass the `--ordered` flag: `flashcards study German --ordered`.
 
-## Bash Autocomplete
-
-When installing with pip, auto completion should work out of the box for __linux__ distributions.
-
-It hasn't been tested on __windows__.
-
-For __OSX__, you might have to copy or reference the [flashcards-complete.sh](flashcards-complete.sh) script to your `.bash_profile` file.
-
 ## Storage directory
 
 By default, decks are stored at `~/.flashcards`, in json format.
