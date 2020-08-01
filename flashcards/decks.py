@@ -29,14 +29,6 @@ class Deck:
     def __str__(self):
         return self.name
 
-    def __iter__(self):
-        """Iter through the cards of this deck."""
-        return iter(self.cards)
-
-    def __len__(self):
-        """Return the number of cards in this Deck."""
-        return len(self.cards)
-
     def add(self, card):
         """
         Add a card to the end of this deck.
@@ -50,7 +42,7 @@ class Deck:
 
     def to_dict(self):
         """Get a dictionary object representing this Deck."""
-        serialized_cards = [c.to_dict() for c in self]
+        serialized_cards = [c.to_dict() for c in self.cards]
 
         data = (
             ("name", self.name),

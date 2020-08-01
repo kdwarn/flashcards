@@ -25,7 +25,7 @@ def status_cmd():
         return click.echo("No deck currently selected.")
 
     click.echo(f"\nCurrently selected deck: {deck.name}")
-    click.echo(f"Number of cards: {len(deck)}")
+    click.echo(f"Number of cards: {len(deck.cards)}")
     if deck.description:
         click.echo(f"Description: {deck.description}")
     click.echo("")
@@ -34,7 +34,10 @@ def status_cmd():
 @cli.command("study")
 @click.argument("deck", default="")
 @click.option(
-    "--ordered", is_flag=True, help="Study the cards in the order they were added to the deck."
+    "-o",
+    "--ordered",
+    is_flag=True,
+    help="Study the cards in the order they were added to the deck.",
 )
 def study_cmd(deck, ordered):
     """
@@ -58,7 +61,7 @@ def study_cmd(deck, ordered):
     if deck.cards:
         study.study(deck, ordered=ordered)
     else:
-        click.echo(f"The {deck.name} deck currently has no cards.")
+        return click.echo(f"The {deck.name} deck currently has no cards.")
 
 
 @cli.command("create")
