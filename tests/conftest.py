@@ -50,3 +50,12 @@ def math_deck(create_storage_directory):
 @pytest.fixture
 def math_deck_filepath(math_deck):
     return math_deck.filepath
+
+
+@pytest.fixture
+def german_deck(create_storage_directory):
+    """A deck with no cards."""
+    deck = decks.Deck("German", "Learning German")
+    deck.create_file()
+    deck.save()
+    return deck
