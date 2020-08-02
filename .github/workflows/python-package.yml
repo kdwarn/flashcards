@@ -44,4 +44,4 @@ jobs:
         black flashcards tests -l 100
     - name: Test with pytest
       run: |
-        python -m pytest --cov=flashcards
+        python -m pytest --cov=flashcards --cov-report=xml --cov-report=html
