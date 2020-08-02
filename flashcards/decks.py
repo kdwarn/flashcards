@@ -4,10 +4,6 @@ import json
 import os
 from pathlib import Path
 
-import click
-
-from flashcards import decks
-
 
 STORAGE_DIR_NAME = ".flashcards"
 DECK_EXTENSION = ".json"
