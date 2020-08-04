@@ -1,7 +1,11 @@
+from pathlib import Path
+
 from click.testing import CliRunner
+import pytest
 
 from flashcards.decks import link_selected_deck
 from flashcards import main
+from flashcards import decks
 
 ################
 # Status command
@@ -56,3 +60,35 @@ def test_error_message_if_deck_has_no_cards(create_storage_directory, german_dec
     runner = CliRunner()
     result = runner.invoke(main.study_cmd, ["German"])
     assert "has no cards" in result.output
+
+
+################
+# create command
+
+
+def test_create_success_message_received(create_storage_directory):
+    runner = CliRunner()
+    result = runner.invoke(main.create, input="Italian\nStudy Italian")
+    assert "Deck created" in result.output
+
+
+def test_deck_created(create_storage_directory):
+    runner = CliRunner()
+    result = runner.invoke(main.create, input="Italian\nStudy Italian")
+    assert "Deck created" in result.output  # message returned to the user
+
+    # load the deck that was just created, and check its filename (although an exception would have
+    # been raised if it wasn't created corrently)
+    deck = decks.load_deck(decks.generate_deck_filepath("Italian"))
+    assert deck.name == "Italian"
+
+
+def test_trying_to_create_deck_that_already_exists_returns_error_message(math_deck):
+    runner = CliRunner()
+    result = runner.invoke(main.create, input="Basic Math\nStudy Math")
+    assert "A deck with that name already exists; aborting." in result.output
+
+
+@pytest.mark.xfail
+def test_link_created(create_storage_directory):
+    assert 0
