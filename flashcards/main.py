@@ -128,7 +128,7 @@ def ask_for_answer(editor_mode=False):
     return click.prompt("Answer")
 
 
-def prompt_via_editor(filename, message):
+def prompt_via_editor(filename: str, message: str) -> str:
     """
     Open a temp file in an editor and return the input from the user.
 
