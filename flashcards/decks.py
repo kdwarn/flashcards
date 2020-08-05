@@ -44,7 +44,7 @@ class Deck:
         """Serialize and save the deck to its file."""
 
         with open(self.filepath, "w") as file:
-            json.dump(self.to_dict(), file)
+            json.dump(self.to_dict(), file, indent=4)
 
 
 def load_deck(filepath: Path) -> Deck:
