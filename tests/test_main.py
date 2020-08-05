@@ -89,6 +89,46 @@ def test_trying_to_create_deck_that_already_exists_returns_error_message(math_de
     assert "A deck with that name already exists; aborting." in result.output
 
 
-@pytest.mark.xfail
-def test_link_created(create_storage_directory):
-    assert 0
+def test_link_created_after_deck_created(create_storage_directory):
+    runner = CliRunner()
+    runner.invoke(main.create, input="Italian\nStudy Italian")
+    assert decks.selected_deck_path().resolve() == decks.storage_path() / "Italian.json"
+
+
+################
+# select command
+
+
+def test_successful_deck_selection(math_deck):
+    runner = CliRunner()
+    result = runner.invoke(main.select, ["Basic Math"])
+    assert "Selected deck: Basic Math" in result.output
+
+
+def test_selecting_deck_that_doesnt_exist_returns_error_message():
+    runner = CliRunner()
+    result = runner.invoke(main.select, ["Spanish"])
+    assert "No deck by that name found" in result.output
+
+
+def test_link_created_after_deck_selected(math_deck):
+    runner = CliRunner()
+    runner.invoke(main.select, ["Basic Math"])
+    assert decks.selected_deck_path().resolve() == decks.storage_path() / "Basic_Math.json"
+
+
+#############
+# add command
+
+
+def test_add_card_successful(math_deck):
+    runner = CliRunner()
+    runner.invoke(main.select, ["Basic Math"])
+    result = runner.invoke(main.add, input="Square root of 25?\n5")
+    assert "Card added to the deck!" in result.output
+
+
+def test_add_card_returns_error_message_if_no_deck_selected(math_deck):
+    runner = CliRunner()
+    result = runner.invoke(main.add, input="Square root of 25?\n5")
+    assert "No deck is currently selected" in result.output

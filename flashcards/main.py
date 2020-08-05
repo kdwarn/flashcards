@@ -105,7 +105,7 @@ def add(editormode):
     try:
         deck = decks.load_deck(decks.selected_deck_path())
     except IOError:
-        return click.echo("There is no deck currently selected. Select a deck to add a card.")
+        return click.echo("No deck is currently selected. Select a deck to add a card.")
 
     question = ask_for_question(editormode)
     answer = ask_for_answer(editormode)
