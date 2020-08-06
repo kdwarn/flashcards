@@ -132,3 +132,34 @@ def test_add_card_returns_error_message_if_no_deck_selected(math_deck):
     runner = CliRunner()
     result = runner.invoke(main.add, input="Square root of 25?\n5")
     assert "No deck is currently selected" in result.output
+
+
+######################
+# list decks command
+
+
+def test_listing_decks_successful(math_deck):
+    runner = CliRunner()
+    result = runner.invoke(main.list_decks)
+    assert "Your decks:" in result.output and "Basic Math" in result.output
+
+
+def test_list_multiple_decks_successful(math_deck, german_deck):
+    runner = CliRunner()
+    result = runner.invoke(main.list_decks)
+    assert (
+        "Your decks:" in result.output
+        and "Basic Math" in result.output
+        and "German" in result.output
+    )
+
+
+def test_error_message_if_no_decks_after_list_command(create_storage_directory):
+    runner = CliRunner()
+    result = runner.invoke(main.list_decks)
+    assert "You don't have any decks yet." in result.output
+
+
+@pytest.mark.xfail
+def test_error_message_if_deck_missing_key():
+    assert 0

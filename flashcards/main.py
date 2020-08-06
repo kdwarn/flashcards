@@ -1,4 +1,5 @@
 """Main entry point of the application, with commands and sub-commands."""
+import json
 import os
 from subprocess import call
 import tempfile
@@ -17,7 +18,7 @@ def cli():
 
 @cli.command("status")
 def status_cmd():
-    """Show selected deck, if any, and details about it."""
+    """Show details about selected deck, if any."""
     try:
         deck = decks.load_deck(decks.selected_deck_path())
     except IOError:
@@ -91,6 +92,33 @@ def select(deck):
     decks.link_selected_deck(deck_path)  # make this the selected deck
     click.echo(f"Selected deck: {deck_obj.name}")
     click.echo("New cards will be added to this deck.")
+
+
+@cli.command("list")
+def list_decks():
+    """List all decks."""
+    storage_dir = decks.storage_path()
+    deck_paths = list(storage_dir.glob("**/*.json"))
+    if not deck_paths:
+        click.echo("You don't have any decks yet.")
+    else:
+        click.echo("\nYour decks:")
+        for deck_path in deck_paths:
+            try:
+                deck = decks.load_deck(deck_path)
+            except json.decoder.JSONDecodeError:
+                click.echo(f"  Problem loading deck in file {deck_path.name}; ignored.")
+                continue
+            except KeyError as e:
+                click.echo(e)
+                continue
+            click.echo(f"  {deck.name} ", nl=False)
+            click.echo(f"({str(len(deck.cards))} cards)", nl=False)
+            if deck.description:
+                click.echo(f": {deck.description}")
+            else:
+                click.echo("")
+        click.echo("")
 
 
 @cli.command("add")
