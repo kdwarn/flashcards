@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 
+import click
 
 STORAGE_DIR_NAME = ".flashcards"
 DECK_EXTENSION = ".json"
@@ -76,6 +77,14 @@ def create_storage_directory():
     path = storage_path()
     if not path.exists():
         path.mkdir()
+
+
+def check_deck_name(context, param, value):
+    """Disallow deck names that don't start with letter; reprompt user."""
+    while not value[0].isalpha():
+        click.echo("Sorry, the name must start with a letter.")
+        value = click.prompt("Name of the deck")
+    return value
 
 
 def generate_filename(string: str) -> str:

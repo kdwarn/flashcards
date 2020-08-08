@@ -65,11 +65,12 @@ def study_cmd(deck, ordered):
 
 
 @cli.command("create")
-@click.option("--name", prompt="Name of the deck")
+@click.option("--name", prompt="Name of the deck", callback=decks.check_deck_name, is_eager=True)
 @click.option("--desc", prompt="Description of the deck")
 def create(name, desc):
     """Create a new deck."""
     deck = decks.Deck(name, desc)
+
     try:
         deck.create_file()
     except IOError:

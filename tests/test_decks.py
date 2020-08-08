@@ -48,6 +48,11 @@ def test_create_storage_path_raises_error_if_exists():
     pass
 
 
+@pytest.mark.xfail
+def test_deck_name_must_start_with_letter():
+    assert False
+
+
 def test_generate_deck_filepath():
     path = decks.generate_deck_filepath("French")
     assert path == Path(f"/home/{getpass.getuser()}/.flashcards/French.json")
