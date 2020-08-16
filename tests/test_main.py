@@ -83,6 +83,20 @@ def test_deck_created(create_storage_directory):
     assert deck.name == "Italian"
 
 
+def test_reprompt_if_deck_name_doesnt_start_with_letter(create_storage_directory):
+    runner = CliRunner()
+
+    # "1test" is incorrect so user is reprompted, then we submit "test_name" and "test desc"
+    result = runner.invoke(main.create, input="1test\ntest_name\ntest_desc")
+
+    assert "Sorry, the name must start with a letter" in result.output
+    assert "Deck created" in result.output
+
+    # now check the name is correct
+    deck = decks.load_deck(decks.generate_deck_filepath("test_name"))
+    assert deck.name == "test_name"
+
+
 def test_trying_to_create_deck_that_already_exists_returns_error_message(math_deck):
     runner = CliRunner()
     result = runner.invoke(main.create, input="Basic Math\nStudy Math")
