@@ -44,13 +44,32 @@ def test_storage_path():
     assert decks.storage_path() == Path(f"/home/{getpass.getuser()}/.flashcards")
 
 
-def test_create_storage_path_raises_error_if_exists():
-    pass
-
-
 @pytest.mark.xfail
-def test_deck_name_must_start_with_letter():
+def test_create_storage_path_raises_error_if_exists():
     assert False
+
+
+@pytest.mark.parametrize(
+    "name, expected",
+    [
+        ("1test", True),
+        ("-test", True),
+        ("'test", True),
+        ('"test', True),
+        ("@test", True),
+        (" test", True),
+        ("test", False),
+    ],
+)
+def test_deck_name_must_start_with_letter(name, expected):
+    assert decks.name_starts_with_non_letter(name) is expected
+
+
+@pytest.mark.parametrize(
+    "name, expected", [("Basic Math", True), ("German", True), ("English", False)]
+)
+def test_file_would_be_duplicate(name, expected, math_deck, german_deck):
+    assert decks.file_would_be_duplicate(name) is expected
 
 
 def test_generate_deck_filepath():

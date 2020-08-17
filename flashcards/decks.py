@@ -79,11 +79,26 @@ def create_storage_directory():
         path.mkdir()
 
 
+def name_starts_with_non_letter(name):
+    """Helper function for check_deck_name(), to enable easier testing."""
+    return not name[0].isalpha()
+
+
+def file_would_be_duplicate(name):
+    """Helper function for check_deck_name(), to enable easier testing."""
+    return generate_deck_filepath(name).exists()
+
+
 def check_deck_name(context, param, value):
-    """Disallow deck names that don't start with letter; reprompt user."""
-    while not value[0].isalpha():
+    """Enforce contraints on the deck name."""
+    while name_starts_with_non_letter(value):
         click.echo("Sorry, the name must start with a letter.")
         value = click.prompt("Name of the deck")
+
+    while file_would_be_duplicate(value):
+        click.echo("Sorry, a deck with that name already exists.")
+        value = click.prompt("Name of the deck")
+
     return value
 
 

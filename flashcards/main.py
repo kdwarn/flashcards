@@ -70,11 +70,7 @@ def study_cmd(deck, ordered):
 def create(name, desc):
     """Create a new deck."""
     deck = decks.Deck(name, desc)
-
-    try:
-        deck.create_file()
-    except IOError:
-        return click.echo("A deck with that name already exists; aborting.")
+    deck.create_file()
     deck.save()
     decks.link_selected_deck(deck.filepath)  # make this the selected deck
     click.echo("Deck created!")

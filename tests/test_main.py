@@ -1,5 +1,3 @@
-from pathlib import Path
-
 from click.testing import CliRunner
 import pytest
 
@@ -86,7 +84,7 @@ def test_deck_created(create_storage_directory):
 def test_reprompt_if_deck_name_doesnt_start_with_letter(create_storage_directory):
     runner = CliRunner()
 
-    # "1test" is incorrect so user is reprompted, then we submit "test_name" and "test desc"
+    # "1test" is incorrect so user is reprompted; then we submit acceptable name and desc
     result = runner.invoke(main.create, input="1test\ntest_name\ntest_desc")
 
     assert "Sorry, the name must start with a letter" in result.output
@@ -97,10 +95,18 @@ def test_reprompt_if_deck_name_doesnt_start_with_letter(create_storage_directory
     assert deck.name == "test_name"
 
 
-def test_trying_to_create_deck_that_already_exists_returns_error_message(math_deck):
+def test_reprompt_if_deck_name_already_exists(math_deck):
     runner = CliRunner()
-    result = runner.invoke(main.create, input="Basic Math\nStudy Math")
-    assert "A deck with that name already exists; aborting." in result.output
+
+    # "Basic Math" already exists so user is reprompted; then we submit acceptable name and desc
+    result = runner.invoke(main.create, input="Basic Math\nBasic Math1\nLearning math.")
+
+    assert "Sorry, a deck with that name already exists." in result.output
+    assert "Deck created" in result.output
+
+    # now check the name is correct
+    deck = decks.load_deck(decks.generate_deck_filepath("Basic_Math1"))
+    assert deck.name == "Basic Math1"
 
 
 def test_link_created_after_deck_created(create_storage_directory):
