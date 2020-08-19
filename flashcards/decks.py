@@ -114,8 +114,8 @@ def generate_stem(string: str) -> str:
 
 def generate_deck_filepath(deck_name: str) -> Path:
     """Generate the absolute filepath in which the given deck should be stored."""
-    stem = generate_stem(deck_name) + DECK_EXTENSION
-    return storage_path() / stem
+    filename = generate_stem(deck_name) + DECK_EXTENSION
+    return storage_path() / filename
 
 
 def selected_deck_path() -> Path:
