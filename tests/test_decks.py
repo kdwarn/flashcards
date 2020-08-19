@@ -74,7 +74,7 @@ def test_file_would_be_duplicate(name, expected, math_deck, german_deck):
 
 def test_generate_deck_filepath():
     path = decks.generate_deck_filepath("French")
-    assert path == Path(f"/home/{getpass.getuser()}/.flashcards/French.json")
+    assert path == Path(f"/home/{getpass.getuser()}/.flashcards/french.json")
 
 
 def test_selected_deck_path():
@@ -98,15 +98,10 @@ def test_temp_create_storage_directory(create_storage_directory, storage_path):
 
 
 @pytest.mark.parametrize(
-    "input, expected",
-    [
-        ("!f@i#l$e%-^n&a*m(e)0", "file_name0.json"),
-        ("file-name", "file_name.json"),
-        ("file name", "file_name.json"),
-    ],
+    "input, expected", [("!F@i#l$e%-^n&A*m(e)'_0", "file-name_0"), ("file name", "file-name")],
 )
-def test_generate_filename_alphanum(input, expected):
-    result = decks.generate_filename(input)
+def test_generate_stem_alphanum(input, expected):
+    result = decks.generate_stem(input)
     assert expected == result
 
 

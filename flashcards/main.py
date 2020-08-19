@@ -65,7 +65,7 @@ def study_cmd(deck, ordered):
 
 
 @cli.command("create")
-@click.option("--name", prompt="Name of the deck", callback=decks.check_deck_name)
+@click.option("--name", prompt="Name of the deck", callback=decks.check_and_standardize_deck_name)
 @click.option("--desc", prompt="Description of the deck")
 def create(name, desc):
     """Create a new deck."""

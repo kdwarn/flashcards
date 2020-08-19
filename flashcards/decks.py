@@ -89,7 +89,7 @@ def file_would_be_duplicate(name):
     return generate_deck_filepath(name).exists()
 
 
-def check_deck_name(context, param, value):
+def check_and_standardize_deck_name(context, param, value):
     """Enforce contraints on the deck name."""
     while name_starts_with_non_letter(value):
         click.echo("Sorry, the name must start with a letter.")
@@ -99,25 +99,23 @@ def check_deck_name(context, param, value):
         click.echo("Sorry, a deck with that name already exists.")
         value = click.prompt("Name of the deck")
 
-    return value
+    return generate_stem(value)
 
 
-def generate_filename(string: str) -> str:
+def generate_stem(string: str) -> str:
     """Generate a valid filename from a given string."""
-    swapchars = {" ": "_", "-": "_"}  # keys are swapped by their values
 
-    for key, value in swapchars.items():
-        string = string.replace(key, value)
+    string = string.replace(" ", "-")
 
-    _ = [c for c in string if c.isalnum() or c == "_"]
-    filename = "".join(_)
-    return filename + DECK_EXTENSION
+    _ = [c for c in string if c.isalnum() or c in ["_", "-"]]
+    stem = "".join(_)
+    return stem.lower()
 
 
 def generate_deck_filepath(deck_name: str) -> Path:
     """Generate the absolute filepath in which the given deck should be stored."""
-    filename = generate_filename(deck_name)
-    return storage_path() / filename
+    stem = generate_stem(deck_name) + DECK_EXTENSION
+    return storage_path() / stem
 
 
 def selected_deck_path() -> Path:

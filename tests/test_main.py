@@ -78,7 +78,7 @@ def test_deck_created(create_storage_directory):
     # load the deck that was just created, and check its filename (although an exception would have
     # been raised if it wasn't created corrently)
     deck = decks.load_deck(decks.generate_deck_filepath("Italian"))
-    assert deck.name == "Italian"
+    assert deck.name == "italian"
 
 
 def test_reprompt_if_deck_name_doesnt_start_with_letter(create_storage_directory):
@@ -105,14 +105,14 @@ def test_reprompt_if_deck_name_already_exists(math_deck):
     assert "Deck created" in result.output
 
     # now check the name is correct
-    deck = decks.load_deck(decks.generate_deck_filepath("Basic_Math1"))
-    assert deck.name == "Basic Math1"
+    deck = decks.load_deck(decks.generate_deck_filepath("Basic Math1"))
+    assert deck.name == "basic-math1"
 
 
 def test_link_created_after_deck_created(create_storage_directory):
     runner = CliRunner()
     runner.invoke(main.create, input="Italian\nStudy Italian")
-    assert decks.selected_deck_path().resolve() == decks.storage_path() / "Italian.json"
+    assert decks.selected_deck_path().resolve() == decks.storage_path() / "italian.json"
 
 
 ################
@@ -127,14 +127,14 @@ def test_successful_deck_selection(math_deck):
 
 def test_selecting_deck_that_doesnt_exist_returns_error_message():
     runner = CliRunner()
-    result = runner.invoke(main.select, ["Spanish"])
+    result = runner.invoke(main.select, ["spanish"])
     assert "No deck by that name found" in result.output
 
 
 def test_link_created_after_deck_selected(math_deck):
     runner = CliRunner()
     runner.invoke(main.select, ["Basic Math"])
-    assert decks.selected_deck_path().resolve() == decks.storage_path() / "Basic_Math.json"
+    assert decks.selected_deck_path().resolve() == decks.storage_path() / "basic-math.json"
 
 
 #############
