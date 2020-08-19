@@ -79,17 +79,17 @@ def create_storage_directory():
         path.mkdir()
 
 
-def name_starts_with_non_letter(name):
+def name_starts_with_non_letter(name) -> bool:
     """Helper function for check_deck_name(), to enable easier testing."""
     return not name[0].isalpha()
 
 
-def file_would_be_duplicate(name):
+def file_would_be_duplicate(name) -> bool:
     """Helper function for check_deck_name(), to enable easier testing."""
     return generate_deck_filepath(name).exists()
 
 
-def check_and_standardize_deck_name(context, param, value):
+def check_and_standardize_deck_name(context, param, value) -> str:
     """Enforce contraints on the deck name."""
     while name_starts_with_non_letter(value):
         click.echo("Sorry, the name must start with a letter.")
