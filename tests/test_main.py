@@ -67,13 +67,13 @@ def test_error_message_if_deck_has_no_cards(create_storage_directory, german_dec
 def test_create_success_message_received(create_storage_directory):
     runner = CliRunner()
     result = runner.invoke(main.create, input="Italian\nStudy Italian")
-    assert "Deck created" in result.output
+    assert 'Deck "italian" created' in result.output
 
 
 def test_deck_created(create_storage_directory):
     runner = CliRunner()
     result = runner.invoke(main.create, input="Italian\nStudy Italian")
-    assert "Deck created" in result.output  # message returned to the user
+    assert 'Deck "italian" created' in result.output  # message returned to the user
 
     # load the deck that was just created, and check its filename (although an exception would have
     # been raised if it wasn't created corrently)
@@ -88,7 +88,7 @@ def test_reprompt_if_deck_name_doesnt_start_with_letter(create_storage_directory
     result = runner.invoke(main.create, input="1test\ntest_name\ntest_desc")
 
     assert "Sorry, the name must start with a letter" in result.output
-    assert "Deck created" in result.output
+    assert 'Deck "test_name" created' in result.output
 
     # now check the name is correct
     deck = decks.load_deck(decks.generate_deck_filepath("test_name"))
@@ -102,7 +102,7 @@ def test_reprompt_if_deck_name_already_exists(math_deck):
     result = runner.invoke(main.create, input="Basic Math\nBasic Math1\nLearning math.")
 
     assert "Sorry, a deck with that name already exists." in result.output
-    assert "Deck created" in result.output
+    assert 'Deck "basic-math1" created' in result.output
 
     # now check the name is correct
     deck = decks.load_deck(decks.generate_deck_filepath("Basic Math1"))

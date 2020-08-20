@@ -73,7 +73,7 @@ def create(name, desc):
     deck.create_file()
     deck.save()
     decks.link_selected_deck(deck.filepath)  # make this the selected deck
-    click.echo("Deck created!")
+    click.echo(f'Deck "{name}" created!')
 
 
 @cli.command("select")
