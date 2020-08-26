@@ -12,7 +12,11 @@ from flashcards import decks
 
 @click.group()
 def cli():
-    """Create and study flashcards on the command line."""
+    """
+    Create and study flashcards on the command line.
+
+    For additional help, run a command below with the --help option or visit https://github.com/kdwarn/flashcards.
+    """
     decks.create_storage_directory()  # create it if it doesn't already exist
 
 
