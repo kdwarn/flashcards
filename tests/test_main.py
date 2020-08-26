@@ -181,5 +181,10 @@ def test_error_message_if_no_decks_after_list_command(create_storage_directory):
 
 
 @pytest.mark.xfail
+def test_decks_listed_in_alpha_order(german_deck, math_deck):
+    assert False
+
+
+@pytest.mark.xfail
 def test_error_message_if_deck_missing_key():
     assert 0

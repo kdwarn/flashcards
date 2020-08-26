@@ -100,7 +100,7 @@ def list_decks():
         click.echo("You don't have any decks yet.")
     else:
         click.echo("\nYour decks:")
-        for deck_path in deck_paths:
+        for deck_path in sorted(deck_paths):
             try:
                 deck = decks.load_deck(deck_path)
             except json.decoder.JSONDecodeError:
