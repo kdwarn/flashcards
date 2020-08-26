@@ -104,7 +104,7 @@ def check_and_standardize_deck_name(context, param, value) -> str:
 
 def generate_stem(string: str) -> str:
     """Generate a valid filename from a given string."""
-
+    string = string.strip()
     string = string.replace(" ", "-")
 
     _ = [c for c in string if c.isalnum() or c in ["_", "-"]]
