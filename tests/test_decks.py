@@ -71,6 +71,8 @@ def test_deck_name_must_start_with_letter(name, expected):
 def test_file_would_be_duplicate(name, expected, math_deck, german_deck):
     assert decks.file_would_be_duplicate(name) is expected
 
+def test_deck_cannot_be_named_all():
+    assert decks.deck_name_is_all("all") is True
 
 def test_generate_deck_filepath():
     path = decks.generate_deck_filepath("French")

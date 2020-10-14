@@ -80,14 +80,20 @@ def create_storage_directory():
 
 
 def name_starts_with_non_letter(name) -> bool:
-    """Helper function for check_deck_name(), to enable easier testing."""
+    """Helper function to enable easier testing."""
     return not name[0].isalpha()
 
 
 def file_would_be_duplicate(name) -> bool:
-    """Helper function for check_deck_name(), to enable easier testing."""
+    """Helper function to enable easier testing."""
     return generate_deck_filepath(name).exists()
 
+
+def deck_name_is_all(name) -> bool:
+    """Helper function to enable easier testing."""
+    if name == "all":
+        return True
+    return False
 
 def check_and_standardize_deck_name(context, param, value) -> str:
     """Enforce contraints on the deck name."""
@@ -99,6 +105,9 @@ def check_and_standardize_deck_name(context, param, value) -> str:
         click.echo("Sorry, a deck with that name already exists.")
         value = click.prompt("Name of the deck")
 
+    while deck_name_is_all(value):
+        click.echo("Sorry, a deck cannot be named 'all'. It's a keyword used in 'flashcards study all'.")
+        value = click.prompt("Name of the deck")
     return generate_stem(value)
 
 
