@@ -1,6 +1,7 @@
 """Main entry point of the application, with commands and sub-commands."""
 import json
 import os
+import random
 from subprocess import call
 import tempfile
 
@@ -48,24 +49,48 @@ def study_cmd(deck, ordered):
     Start a study session. By default, the cards are shuffled.
 
     If DECK is not provided, study the selected deck, if any.
+
+    Use "flashcards study all" to study cards from all decks.
     """
-    if not deck:
-        try:
-            deck = decks.load_deck(decks.selected_deck_path()).name
-        except IOError:
-            return click.echo("No deck currently selected.")
+    # get cards from all decks
+    if deck == "all":
+        cards = []
+        for deck_path in decks.storage_path().iterdir():
+            if deck_path.suffix == ".json":
+                deck = decks.load_deck(deck_path)
 
-    deck_path = decks.generate_deck_filepath(deck)
+                for card in deck.cards:
+                    card["deck"] = deck.name
+                    cards.append(card)
+        if not cards:
+            return click.echo("There are no cards to study.")
 
-    try:
-        deck = decks.load_deck(deck_path)
-    except IOError:
-        return click.echo("No deck by that name found.")
-
-    if deck.cards:
-        study.study(deck, ordered=ordered)
+    # get cards from one deck
     else:
-        return click.echo(f"The {deck.name} deck currently has no cards.")
+        if not deck:
+            try:
+                deck = decks.load_deck(decks.selected_deck_path()).name
+            except IOError:
+                return click.echo("No deck currently selected.")
+
+        deck_path = decks.generate_deck_filepath(deck)
+
+        try:
+            deck = decks.load_deck(deck_path)
+        except IOError:
+            return click.echo("No deck by that name found.")
+
+        if not deck.cards:
+            return click.echo(f"The {deck.name} deck currently has no cards.")
+
+        cards = deck.cards
+
+        for card in cards:
+            card["deck"] = deck.name
+
+    if not ordered:
+        random.shuffle(cards)
+    study.study(cards)
 
 
 @cli.command("create")

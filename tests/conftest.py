@@ -59,3 +59,12 @@ def german_deck(create_storage_directory):
     deck.create_file()
     deck.save()
     return deck
+
+
+@pytest.fixture
+def italian_deck(create_storage_directory):
+    """Another deck with no cards."""
+    deck = decks.Deck("Italian", "Learning Italian")
+    deck.create_file()
+    deck.save()
+    return deck

@@ -1,21 +1,14 @@
 """Display cards' questions and answers to user."""
-import random
-
 import click
 
-from flashcards.decks import Deck
 
+def study(cards: list):
+    """Iterate through cards, pausing for user input after each question/answer."""
+    question_num = len(cards)
 
-def study(deck: Deck, ordered=False):
-    """Iterate through Deck's cards, pausing for user input after each question/answer."""
-    question_num = len(deck.cards)
-
-    if not ordered:
-        random.shuffle(deck.cards)
-
-    for i, card in enumerate(deck.cards, start=1):
+    for i, card in enumerate(cards, start=1):
         click.clear()
-        click.echo(f"QUESTION {i} / {question_num}")
+        click.echo(f"QUESTION {i} / {question_num} ({card['deck']} deck)")
         click.echo("\n" + card["question"] + "\n")
         click.pause("...")
         click.echo("\n" + card["answer"] + "\n")

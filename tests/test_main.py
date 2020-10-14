@@ -60,6 +60,14 @@ def test_error_message_if_deck_has_no_cards(create_storage_directory, german_dec
     assert "has no cards" in result.output
 
 
+def test_error_message_if_multiple_decks_have_no_cards(
+    create_storage_directory, german_deck, italian_deck
+):
+    runner = CliRunner()
+    result = runner.invoke(main.study_cmd, ["all"])
+    assert "no cards to study" in result.output
+
+
 ################
 # create command
 
