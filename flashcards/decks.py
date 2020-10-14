@@ -95,6 +95,7 @@ def deck_name_is_all(name) -> bool:
         return True
     return False
 
+
 def check_and_standardize_deck_name(context, param, value) -> str:
     """Enforce contraints on the deck name."""
     while name_starts_with_non_letter(value):
@@ -106,7 +107,9 @@ def check_and_standardize_deck_name(context, param, value) -> str:
         value = click.prompt("Name of the deck")
 
     while deck_name_is_all(value):
-        click.echo("Sorry, a deck cannot be named 'all'. It's a keyword used in 'flashcards study all'.")
+        click.echo(
+            "Sorry, a deck cannot be named 'all'. It's a keyword used in 'flashcards study all'."
+        )
         value = click.prompt("Name of the deck")
     return generate_stem(value)
 

@@ -71,8 +71,10 @@ def test_deck_name_must_start_with_letter(name, expected):
 def test_file_would_be_duplicate(name, expected, math_deck, german_deck):
     assert decks.file_would_be_duplicate(name) is expected
 
+
 def test_deck_cannot_be_named_all():
     assert decks.deck_name_is_all("all") is True
+
 
 def test_generate_deck_filepath():
     path = decks.generate_deck_filepath("French")
@@ -100,7 +102,8 @@ def test_temp_create_storage_directory(create_storage_directory, storage_path):
 
 
 @pytest.mark.parametrize(
-    "input, expected", [("!F@i#l$e%-^n&A*m(e)'_0", "file-name_0"), ("file name", "file-name")],
+    "input, expected",
+    [("!F@i#l$e%-^n&A*m(e)'_0", "file-name_0"), ("file name", "file-name")],
 )
 def test_generate_stem_alphanum(input, expected):
     result = decks.generate_stem(input)
