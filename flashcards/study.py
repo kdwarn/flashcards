@@ -12,9 +12,13 @@ def study(cards: list):
         click.echo("\n" + card["question"] + "\n")
         click.pause("...")
         click.echo("\n" + card["answer"] + "\n")
-        click.echo("Press any key to show the next question, and 'q' to quit.")
+        click.pause("Press any key to show the next question, and 'q' to quit.")
         key_press = click.getchar()
         if key_press == "q":
             return
+        if key_press == "e":
+            click.echo("user pressed e")
+        if key_press == "d":
+            click.echo("user pressed d")
 
     click.echo("All done!")
