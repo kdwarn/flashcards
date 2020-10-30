@@ -2,13 +2,12 @@
 import json
 import os
 import random
-from subprocess import call
-import tempfile
 
 import click
 
 from flashcards import study
 from flashcards import decks
+from flashcards.editor import prompt_via_editor
 
 
 @click.group()
@@ -161,48 +160,21 @@ def add(editormode):
     except IOError:
         return click.echo("No deck is currently selected. Select a deck to add a card.")
 
-    question = ask_for_question(editormode)
-    answer = ask_for_answer(editormode)
+    question = get_user_input("Question", editormode)
+    answer = get_user_input("Answer", editormode)
     deck.cards.append({"question": question, "answer": answer})
     deck.save()
     click.echo("Card added to the deck!")
 
 
-def ask_for_question(editor_mode=False):
-    """Prompt the user for a question."""
-    if editor_mode:
-        return prompt_via_editor("TMP_QUESTION_", "\n# Write your question above.")
-    return click.prompt("Question")
+def get_user_input(input_type, editor_mode=False):
+    """Prompt the user for a question or an answer."""
+    if input_type == "Question":
+        if editor_mode:
+            return prompt_via_editor("\n# Write your question above.")
+        return click.prompt("Question")
 
-
-def ask_for_answer(editor_mode=False):
-    """Prompt the user for an answer."""
-    if editor_mode:
-        return prompt_via_editor("TMP_ANSWER_", "\n# Write your answer above.")
-    return click.prompt("Answer")
-
-
-def prompt_via_editor(filename: str, message: str) -> str:
-    """
-    Open a temp file in an editor and return the input from the user.
-
-    :returns: the input str from the user.
-    """
-    editor = os.environ.get("EDITOR", "vim")
-    filecontent = ""
-    with tempfile.NamedTemporaryFile(prefix=filename, suffix=".tmp", mode="r+") as f:
-        f.write(message)  # start the file with the instructions
-
-        f.flush()
-        call([editor, f.name])  # call the editor to open this file.
-
-        f.seek(0)  # put us back to the top of the file
-        filecontent = f.read()  # copy as string
-
-    # remove the commented out lines telling user where to put question and answer
-    data = ""
-    for line in filecontent.split("\n"):
-        if not line.startswith("#"):
-            data += line + "\n"
-
-    return data.rstrip("\n")
+    if input_type == "Answer":
+        if editor_mode:
+            return prompt_via_editor("\n# Write your answer above.")
+        return click.prompt("Answer")
