@@ -16,11 +16,10 @@ def edit(instructions: str) -> str:
     """
     editor = os.environ.get("EDITOR", "vim")  # default to vim
 
-    with tempfile.TemporaryFile(mode="r+") as f:
+    with tempfile.NamedTemporaryFile(mode="r+") as f:
         f.write(instructions)
 
-        # f.flush()
-        # call([editor, f.name])  # call the editor to open this file.
+        f.flush()
         run([editor, f.name])  # call the editor to open this file.
 
         f.seek(0)  # put us back to the top of the file
