@@ -160,15 +160,13 @@ def add(editormode):
     except IOError:
         return click.echo("No deck is currently selected. Select a deck to add a card.")
 
-    question = get_user_input("Question", editormode)
-    answer = get_user_input("Answer", editormode)
+    if editormode:
+        question = prompt_via_editor("# Write your question above.")
+        answer = prompt_via_editor("# Write your answer above.")
+    else:
+        question = click.prompt("Question")
+        answer = click.prompt("Answer")
+
     deck.cards.append({"question": question, "answer": answer})
     deck.save()
     click.echo("Card added to the deck!")
-
-
-def get_user_input(input_type, editor_mode=False):
-    """Prompt the user for a question or an answer."""
-    if editor_mode:
-        return prompt_via_editor(f"\n# Write your {input_type.lower()} above.")
-    return click.prompt(input_type)
