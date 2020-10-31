@@ -1,9 +1,13 @@
+import os
+from unittest.mock import patch
+
 from click.testing import CliRunner
 import pytest
 
 from flashcards.decks import link_selected_deck
 from flashcards import main
 from flashcards import decks
+from flashcards.editor import edit
 
 ################
 # Status command
@@ -160,6 +164,14 @@ def test_add_card_returns_error_message_if_no_deck_selected(math_deck):
     runner = CliRunner()
     result = runner.invoke(main.add, input="Square root of 25?\n5")
     assert "No deck is currently selected" in result.output
+
+
+@patch.dict(os.environ, {"EDITOR": "not_an_editor"})
+def test_check_if_no_editor_env_var_and_no_vim_returns_error_message(math_deck):
+    runner = CliRunner()
+    runner.invoke(main.select, ["Basic Math"])
+    result = runner.invoke(main.add, ["-e"])
+    assert "Could not open" in result.output
 
 
 ######################
