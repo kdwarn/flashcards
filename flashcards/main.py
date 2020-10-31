@@ -169,12 +169,6 @@ def add(editormode):
 
 def get_user_input(input_type, editor_mode=False):
     """Prompt the user for a question or an answer."""
-    if input_type == "Question":
-        if editor_mode:
-            return prompt_via_editor("\n# Write your question above.")
-        return click.prompt("Question")
-
-    if input_type == "Answer":
-        if editor_mode:
-            return prompt_via_editor("\n# Write your answer above.")
-        return click.prompt("Answer")
+    if editor_mode:
+        return prompt_via_editor(f"\n# Write your {input_type.lower()} above.")
+    return click.prompt(input_type)
