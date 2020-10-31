@@ -31,6 +31,7 @@ def test_check_if_default_editor_called_by_edit(fake_process):
     assert editor in fake_process.calls[0]
 
 
+
 @patch.dict(os.environ, {"EDITOR": "nano"})
 def test_check_if_mocked_editor_envvar__called_by_edit(fake_process):
     # register any process

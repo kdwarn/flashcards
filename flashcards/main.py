@@ -161,8 +161,14 @@ def add(editormode):
         return click.echo("No deck is currently selected. Select a deck to add a card.")
 
     if editormode:
-        question = prompt_via_editor("# Write your question above.")
-        answer = prompt_via_editor("# Write your answer above.")
+        try:
+            question = prompt_via_editor("# Write your question above.")
+            answer = prompt_via_editor("# Write your answer above.")
+        except FileNotFoundError:
+            return click.echo(
+                "Could not open an editor. Set the EDITOR environment variable to the name "
+                "of your editor or install Vim."
+            )
     else:
         question = click.prompt("Question")
         answer = click.prompt("Answer")

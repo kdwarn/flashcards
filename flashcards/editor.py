@@ -21,7 +21,6 @@ def edit(instructions: str) -> str:
 
         f.flush()
         run([editor, f.name])  # call the editor to open this file.
-
         f.seek(0)  # put us back to the top of the file
         filecontent = f.read()  # copy as string
 
