@@ -6,6 +6,7 @@ Test editor functionality.
 import os
 from unittest.mock import patch
 
+import pytest
 
 from flashcards.editor import prompt_via_editor, remove_instructions, edit
 
@@ -31,7 +32,6 @@ def test_check_if_default_editor_called_by_edit(fake_process):
     assert editor in fake_process.calls[0]
 
 
-
 @patch.dict(os.environ, {"EDITOR": "nano"})
 def test_check_if_mocked_editor_envvar__called_by_edit(fake_process):
     # register any process
@@ -51,3 +51,10 @@ This is the question
 
     content = prompt_via_editor("# This is an instruction line")
     assert "# This is an instruction line" not in content
+
+
+@patch("flashcards.editor.edit")
+def test_empty_result_from_prompt_via_editor_rasies_error(mock_edit):
+    mock_edit.return_value = " "
+    with pytest.raises(ValueError):
+        prompt_via_editor("# This is an instruction line")

@@ -162,8 +162,14 @@ def add(editormode):
 
     if editormode:
         try:
-            question = prompt_via_editor("# Write your question above.")
-            answer = prompt_via_editor("# Write your answer above.")
+            try:
+                question = prompt_via_editor("# Write your question above.")
+            except ValueError:
+                return click.echo("Card not added - no question entered.")
+            try:
+                answer = prompt_via_editor("# Write your answer above.")
+            except ValueError:
+                return click.echo("Card not added - no answer entered.")
         except FileNotFoundError:
             return click.echo(
                 "Could not open an editor. Set the EDITOR environment variable to the name "

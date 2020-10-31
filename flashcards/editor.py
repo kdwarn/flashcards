@@ -5,9 +5,11 @@ import tempfile
 
 def prompt_via_editor(instructions: str) -> str:
     """Open a temp file in an editor and return the input from the user, excluding instructions."""
-    filecontent = edit(instructions)
+    filecontent = remove_instructions(edit(instructions)).strip()
 
-    return remove_instructions(filecontent)
+    if not filecontent:
+        raise ValueError
+    return filecontent
 
 
 def edit(instructions: str) -> str:
@@ -17,8 +19,7 @@ def edit(instructions: str) -> str:
     editor = os.environ.get("EDITOR", "vim")  # default to vim
 
     with tempfile.NamedTemporaryFile(mode="r+") as f:
-        f.write(instructions)
-
+        f.write("\n" + instructions)
         f.flush()
         run([editor, f.name])  # call the editor to open this file.
         f.seek(0)  # put us back to the top of the file
