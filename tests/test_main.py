@@ -167,7 +167,7 @@ def test_add_card_returns_error_message_if_no_deck_selected(math_deck):
 
 
 @patch.dict(os.environ, {"EDITOR": "not_an_editor"})
-def test_check_if_no_editor_env_var_and_no_vim_returns_error_message():
+def test_check_if_no_editor_env_var_and_no_vim_returns_error_message(math_deck):
     runner = CliRunner()
     runner.invoke(main.select, ["Basic Math"])
     result = runner.invoke(main.add, ["-e"])
