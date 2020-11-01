@@ -7,7 +7,6 @@ import pytest
 from flashcards.decks import link_selected_deck
 from flashcards import main
 from flashcards import decks
-from flashcards.editor import edit
 
 ################
 # Status command

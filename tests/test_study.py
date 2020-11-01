@@ -36,8 +36,8 @@ def test_pressing_e_enters_editor(create_storage_directory, math_deck):
     # 1st question should be output - appears before the first input is received/checked
     assert "2 + 2 = ?" in result.output
 
-    # debug print statement should be output, appears after first question when "e" used
-    assert "user pressed e" in result.output
+    # confirmation statement should be output, appears after user saves file
+    assert "Card edited" in result.output
 
     # 2nd question should be output - user just hit e, so it continues (after printing debug)
     assert "2 + 3 = ?" in result.output

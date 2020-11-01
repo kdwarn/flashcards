@@ -7,7 +7,7 @@ import click
 
 from flashcards import study
 from flashcards import decks
-from flashcards.editor import prompt_via_editor
+from flashcards.editor import prompt_via_editor, remove_instructions
 
 
 @click.group()
@@ -162,13 +162,13 @@ def add(editormode):
 
     if editormode:
         try:
-            try:
-                question = prompt_via_editor("# Write your question above.")
-            except ValueError:
+            question = prompt_via_editor("\n# Write your question above.")
+            question = remove_instructions(question).strip()
+            if not question:
                 return click.echo("Card not added - no question entered.")
-            try:
-                answer = prompt_via_editor("# Write your answer above.")
-            except ValueError:
+            answer = prompt_via_editor("\n# Write your answer above.")
+            answer = remove_instructions(answer).strip()
+            if not answer:
                 return click.echo("Card not added - no answer entered.")
         except FileNotFoundError:
             return click.echo(
