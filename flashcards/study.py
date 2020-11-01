@@ -21,8 +21,9 @@ def study(cards: list):
         click.echo("\n" + card["question"] + "\n")
         click.pause("...")
         click.echo("\n" + card["answer"] + "\n")
-        click.echo(
-            "Press 'e' to edit this question, 'q' to quit, and any other key to show the next question."
+        click.secho(
+            "Press 'e' to edit this question, 'q' to quit, and any other key to show the next question.",
+            fg="green",
         )
         key_press = click.getchar()
         if key_press == "q":
