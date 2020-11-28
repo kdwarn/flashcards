@@ -24,7 +24,7 @@ def test_pressing_q_quits_session(math_deck):
     runner = CliRunner()
     result = runner.invoke(main.study_cmd, ["Basic Math", "-o"], input="jq")
     assert "2 + 2 = ?" in result.output  # first question should be in output
-    assert "2 + 3 = ?" in result.output  # second questions hould be in output
+    assert "2 + 3 = ?" in result.output  # second question should be in output
     assert "2 + 4 = ?" not in result.output  # should not reach second question
     assert "All done!" not in result.output  # should not reach the end
 
