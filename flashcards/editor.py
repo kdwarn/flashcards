@@ -73,7 +73,4 @@ def edit_card(card: dict) -> dict:
     for line in lines[q_instruction_line + 1 : a_instruction_line]:
         edited_answer.append(line)
 
-    card["question"] = "\n".join(edited_question)
-    card["answer"] = "\n".join(edited_answer)
-
-    return card
+    return {"question": "\n".join(edited_question), "answer": "\n".join(edited_answer)}
