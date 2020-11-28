@@ -5,9 +5,9 @@ import random
 
 import click
 
-from flashcards import study
 from flashcards import decks
-from flashcards.editor import prompt_via_editor, remove_instructions
+from flashcards.editor import edit_card, prompt_via_editor, remove_instructions
+from flashcards.exceptions import NoEditsMadeException, InstructionsRemovedException
 
 
 @click.group()
@@ -51,7 +51,7 @@ def study_cmd(deck, ordered):
 
     Use "flashcards study all" to study cards from all decks.
     """
-    # get cards from all decks
+    # load decks (one or all), add deck name to each card to enable editing
     if deck == "all":
         cards = []
         for deck_path in decks.storage_path().iterdir():
@@ -63,8 +63,6 @@ def study_cmd(deck, ordered):
                     cards.append(card)
         if not cards:
             return click.echo("There are no cards to study.")
-
-    # get cards from one deck
     else:
         if not deck:
             try:
@@ -89,7 +87,51 @@ def study_cmd(deck, ordered):
 
     if not ordered:
         random.shuffle(cards)
-    study.study(cards)
+
+    # study - iterate through cards, pausing for user input after each question/answer.
+    question_num = len(cards)
+
+    for i, card in enumerate(cards, start=1):
+        click.clear()
+        click.echo(f"QUESTION {i} / {question_num} ({card['deck']} deck)")
+        click.echo("\n" + card["question"] + "\n")
+        click.pause("...")
+        click.echo("\n" + card["answer"] + "\n")
+        click.secho(
+            "Press 'e' to edit this question, 'q' to quit, and any other key to show the next question.",
+            fg="green",
+        )
+        key_press = click.getchar()  # note that this also acts as a pause
+
+        if key_press == "q":
+            return
+        if key_press == "e":
+            try:
+                edited_card = edit_card(card)
+            except NoEditsMadeException:
+                click.echo("No edits detected; card not edited.")
+            except InstructionsRemovedException:
+                click.echo("Unable to edit card - an instruction line was edited or deleted.")
+            else:
+                deck_path = decks.generate_deck_filepath(card["deck"])
+                deck = decks.load_deck(deck_path)
+
+                for deck_card in deck.cards:
+                    if (
+                        deck_card["question"] == card["question"]
+                        and deck_card["answer"] == card["answer"]
+                    ):
+                        deck_card["question"] = edited_card["question"]
+                        deck_card["answer"] = edited_card["answer"]
+                deck.save()
+                click.echo("Card edited.")
+
+            click.pause()
+
+        if key_press == "d":
+            click.echo("user pressed d")
+
+    click.echo("All done!")
 
 
 @cli.command("create")
