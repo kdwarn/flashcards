@@ -2,6 +2,11 @@ import os
 from subprocess import run
 import tempfile
 
+import click
+
+from flashcards.decks import generate_deck_filepath, load_deck
+from flashcards.exceptions import NoEditsMadeException, InstructionsRemovedException
+
 Q_INSTRUCTION = "# Edit the question above. Do not edit or remove this line."
 A_INSTRUCTION = "# Edit the answer above. Do not edit or remove this line."
 
@@ -31,17 +36,22 @@ def remove_instructions(content: str) -> str:
     return user_input.rstrip("\n")
 
 
-def parse_edited_card(content: str) -> dict:
-    edited_card = {}
-    question = []
-    answer = []
+def edit_card(card: dict) -> dict:
+    """Edit question or answer of a card and return it."""
 
-    lines = content.split("\n")
-    lines = lines[:-1]  # remove the empty line created from the final \n
+    # create string of initial file to be edited
+    filecontents = (
+        card["question"] + "\n" + Q_INSTRUCTION + "\n" + card["answer"] + "\n" + A_INSTRUCTION
+    )
+    edited_filecontents = prompt_via_editor(filecontents)
 
-    # raise exception if the instruction lines have been removed or altered
+    if edited_filecontents == filecontents:
+        raise NoEditsMadeException
+
+    lines = edited_filecontents.split("\n")
+
     if Q_INSTRUCTION not in lines or A_INSTRUCTION not in lines:
-        raise ValueError
+        raise InstructionsRemovedException
 
     # get line numbers of instructions
     q_instruction_line = lines.index(Q_INSTRUCTION)
@@ -53,14 +63,17 @@ def parse_edited_card(content: str) -> dict:
         if line == A_INSTRUCTION:
             a_instruction_line = i
 
+    edited_question = []
+    edited_answer = []
+
     # now get the user's edited answer and question
     for line in lines[0:q_instruction_line]:
-        question.append(line)
+        edited_question.append(line)
 
     for line in lines[q_instruction_line + 1 : a_instruction_line]:
-        answer.append(line)
+        edited_answer.append(line)
 
-    edited_card["question"] = "\n".join(question)
-    edited_card["answer"] = "\n".join(answer)
+    card["question"] = "\n".join(edited_question)
+    card["answer"] = "\n".join(edited_answer)
 
-    return edited_card
+    return card

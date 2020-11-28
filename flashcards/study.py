@@ -2,13 +2,14 @@
 import click
 
 from flashcards.editor import (
+    edit_card,
     prompt_via_editor,
     remove_instructions,
-    parse_edited_card,
     Q_INSTRUCTION,
     A_INSTRUCTION,
 )
 from flashcards.decks import generate_deck_filepath, load_deck
+from flashcards.exceptions import NoEditsMadeException, InstructionsRemovedException
 
 
 def study(cards: list):
@@ -26,35 +27,31 @@ def study(cards: list):
             fg="green",
         )
         key_press = click.getchar()  # note that this also acts as a pause
+
         if key_press == "q":
             return
         if key_press == "e":
-            # create string of initial file to be edited
-            filecontents = (
-                card["question"]
-                + "\n"
-                + Q_INSTRUCTION
-                + "\n"
-                + card["answer"]
-                + "\n"
-                + A_INSTRUCTION
-            )
-            edited_card = prompt_via_editor(filecontents)
-            parsed_card = parse_edited_card(edited_card)
+            try:
+                edited_card = edit_card(card)
+            except NoEditsMadeException:
+                click.echo("No edits detected; card not edited.")
+            except InstructionsRemovedException:
+                click.echo("Unable to edit card - an instruction line was edited or deleted.")
+            else:
+                deck_path = generate_deck_filepath(card["deck"])
+                deck = load_deck(deck_path)
 
-            deck_path = generate_deck_filepath(card["deck"])
-            deck = load_deck(deck_path)
+                # make the change to the appropriate card in the deck
+                for deck_card in deck.cards:
+                    if (
+                        deck_card["question"] == card["question"]
+                        and deck_card["answer"] == card["answer"]
+                    ):
+                        deck_card["question"] = edited_card["question"]
+                        deck_card["answer"] = edited_card["answer"]
+                deck.save()
+                click.echo("Card edited.")
 
-            # make the change to the appropriate card in the deck
-            for deck_card in deck.cards:
-                if (
-                    deck_card["question"] == card["question"]
-                    and deck_card["answer"] == card["answer"]
-                ):
-                    deck_card["question"] = parsed_card["question"]
-                    deck_card["answer"] = parsed_card["answer"]
-            deck.save()
-            click.echo("Card edited.")
             click.pause()
 
         if key_press == "d":

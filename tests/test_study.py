@@ -30,14 +30,15 @@ def test_pressing_q_quits_session(math_deck):
 
 
 def test_pressing_e_enters_editor(create_storage_directory, math_deck):
+    """User edits first question and then quits after second question."""
     runner = CliRunner()
     result = runner.invoke(main.study_cmd, ["Basic Math", "-o"], input="eq")
 
     # 1st question should be output - appears before the first input is received/checked
     assert "2 + 2 = ?" in result.output
 
-    # confirmation statement should be output, appears after user saves file
-    assert "Card edited" in result.output
+    # No edits occurred, so that message should then be displayed after entering/exiting editor
+    assert "No edits detected" in result.output
 
     # 2nd question should be output - user just hit e, so it continues (after printing debug)
     assert "2 + 3 = ?" in result.output

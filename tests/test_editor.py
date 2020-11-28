@@ -8,7 +8,14 @@ from unittest.mock import patch
 
 import pytest
 
-from flashcards.editor import prompt_via_editor, remove_instructions
+from flashcards.editor import (
+    Q_INSTRUCTION,
+    A_INSTRUCTION,
+    edit_card,
+    prompt_via_editor,
+    remove_instructions,
+)
+from flashcards.exceptions import InstructionsRemovedException
 
 
 def test_remove_instructions():
@@ -54,10 +61,24 @@ This is the question
     assert "# This is an instruction line" not in content
 
 
-# TODO: remove from here, create similar test (checking for empty question/answer) in test_main
-@pytest.mark.skip
 @patch("flashcards.editor.prompt_via_editor")
-def test_empty_result_from_prompt_via_editor_rasies_error(mock_edit):
-    mock_edit.return_value = " "
-    with pytest.raises(ValueError):
-        prompt_via_editor("# This is an instruction line")
+def test_altered_instruction_lines_raise_exception(mock_editor_function):
+    mock_editor_function.return_value = "instructions have been removed"
+    card = {"question": "Why?", "answer": "Because"}
+    with pytest.raises(InstructionsRemovedException):
+        edit_card(card)
+
+
+@patch("flashcards.editor.prompt_via_editor")
+def test_edited_card_returns_correct_results(mock_editor_function):
+    mock_editor_function.return_value = f"""Why?
+{Q_INSTRUCTION}
+Because
+{A_INSTRUCTION}
+"""
+    original_card = {"question": "Why not?", "answer": "Because not"}
+
+    card = edit_card(original_card)
+
+    assert card["question"] == "Why?"
+    assert card["answer"] == "Because"
