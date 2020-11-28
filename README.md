@@ -43,11 +43,11 @@ Selected deck: French
 New cards will be added to this deck.
 ```
 
-## Studying Decks
+## Studying Decks, Editing Cards
 
 You can study the currently selected deck with `flashcards study` or you can specify a different deck, e.g. `flashcards study German`. If you have more than one deck, you can also study them all at once with `flashcards study all`.
 
-The app will iterate through the cards, pausing between the question and answer. You can quit the session by pressing the "q" key.
+The app will iterate through the cards, pausing between the question and answer. After the answer is displayed, you can edit the card by pressing "e" and quit the session by pressing "q".
 
 By default, the cards will be shuffled before you start studying. To display them in the order they were created in, pass the `--ordered` flag: `flashcards study German --ordered`.
 

@@ -3,7 +3,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="flashcards",
-    version="1.1",
+    version="1.2",
     description="Command-line interface for creating and studying flashcards",
     author="Jonathan Lalande, Kris Warner",
     author_email="kdwarn@protonmail.com",

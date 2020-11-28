@@ -128,9 +128,6 @@ def study_cmd(deck, ordered):
 
             click.pause()
 
-        if key_press == "d":
-            click.echo("user pressed d")
-
     click.echo("All done!")
 
 
