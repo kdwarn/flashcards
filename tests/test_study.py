@@ -6,13 +6,13 @@ TODO:
 to test_main and only test the helper here.
     * consider removing helper altogether and placing directly in command
 
-NOTE: in the study helper, click.pause is called twice. One keystroke will then continue the
-program. After the second pause, the key stroke is checked. Unlike click.prompt, when entering
-input for this, you only need to string together as many single key-strokes as desired, rather
-than separating them with \n. Each input will only be checked on the second pause, since that's
-where the code does it. So each input is evaluated then, and it's as if there's 1 input per question
-rather than 2. If there are not enough inputs to for every question, the program will just
-continue until the end.
+NOTE: in study.study(), the program is paused twice on each card - first between the question and
+the answer by click.pause(), and then after the answer by click.getchar(). However, if click.pause
+is not run from a terminal, it's as if nothing happens, so this does not happen during testing.
+So it's as if there's only one pause for user input to be entered. Unlike click.prompt, when
+entering input for this, you only need to string together as many single key-strokes as desired (and
+two per card), rather than separating them with \n. If there are not enough inputs to for every
+question, the program will just continue until the end.
 """
 
 from click.testing import CliRunner

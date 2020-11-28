@@ -25,7 +25,7 @@ def study(cards: list):
             "Press 'e' to edit this question, 'q' to quit, and any other key to show the next question.",
             fg="green",
         )
-        key_press = click.getchar()
+        key_press = click.getchar()  # note that this also acts as a pause
         if key_press == "q":
             return
         if key_press == "e":
